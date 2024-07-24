@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Swarm3D.cs" type="Script" id=1]
+[ext_resource path="res://sprites/fish.png" type="Texture" id=2]
+
+[sub_resource type="Curve3D" id=1]
+_data = {
+"points": PoolVector3Array( 0, 0, 0, 0, 0, 0, 253.472, 451.844, 462.835, 0, 0, 0, 0, 0, 0, 357.852, 436.553, 452.309, 0, 0, 0, 0, 0, 0, 367.626, 478.102, 408.181, 0, 0, 0, 0, 0, 0, 353.456, 462.31, 319.209, 0, 0, 0, 0, 0, 0, 306.88, 433.776, 241.608, 0, 0, 0, 0, 0, 0, 264.752, 291.675, 144.49, 0, 0, 0, 0, 0, 0, 188.367, 270.75, 212.917, 0, 0, 0, 0, 0, 0, 151.175, 252.17, 293.567, 0, 0, 0, 0, 0, 0, 160.154, 313.749, 394.145, 0, 0, 0, 0, 0, 0, 207.021, 359.435, 414.336, 0, 0, 0, 0, 0, 0, 206.418, 433.426, 459.85, 0, 0, 0, 0, 0, 0, 253.472, 451.844, 462.835 ),
+"tilts": PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+}
+
+[node name="root" type="Spatial"]
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( -0.705661, 0.315522, -0.634419, 0, 0.895378, 0.445307, 0.708549, 0.314236, -0.631833, -8.591, 600, -6.716 )
+near = 0.01
+far = 8192.0
+
+[node name="SwarmPath" type="Path" parent="."]
+curve = SubResource( 1 )
+
+[node name="Spatial" type="Spatial" parent="."]
+script = ExtResource( 1 )
+amount = 251
+boidTexture = ExtResource( 2 )
