@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Swarm.cs" type="Script" id=1]
+[ext_resource path="res://sprites/fish.png" type="Texture" id=2]
+
+[sub_resource type="Curve2D" id=3]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 618, 823, 0, 0, 0, 0, 515, 882, 0, 0, 0, 0, 361, 863, 0, 0, 0, 0, 237, 763, 0, 0, 0, 0, 270, 661, 0, 0, 0, 0, 375, 580, 0, 0, 0, 0, 504, 495, 0, 0, 0, 0, 613, 390, 0, 0, 0, 0, 653, 264, 0, 0, 0, 0, 653, 143, 0, 0, 0, 0, 518, 107, 0, 0, 0, 0, 347, 169, 0, 0, 0, 0, 297, 276, 0, 0, 0, 0, 320, 378, 0, 0, 0, 0, 658, 538, 0, 0, 0, 0, 732, 640, 0, 0, 0, 0, 720, 721, 0, 0, 0, 0, 618, 823 )
+}
+
+[node name="root" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_left = -57.0
+margin_top = -50.0
+margin_right = 2095.0
+margin_bottom = 1312.0
+color = Color( 0.164706, 0.266667, 0.352941, 1 )
+
+[node name="SwarmPath" type="Path2D" parent="."]
+curve = SubResource( 3 )
+
+[node name="SwarmManager" type="Node2D" parent="."]
+script = ExtResource( 1 )
+amount = 666
+boidTexture = ExtResource( 2 )
