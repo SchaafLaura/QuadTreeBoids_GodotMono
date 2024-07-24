@@ -4,27 +4,27 @@ using System.Collections.Generic;
 
 public class Boid : Vertex
 {
-    public Vector2 acc { get; private set; } // acceleration
-    public Vector2 vel { get; private set; } // velocity
+    public Vector2 acc { get; private set; }            // acceleration
+    public Vector2 vel { get; private set; }            // velocity
 
-    static float closeRangeSq           = 15f * 15f; // range to avoid
-    static float largeRange             = 30f; // range to get close to
+    static float closeRangeSq           = 15f * 15f;    // range to avoid
+    static float largeRange             = 30f;          // range to get close to
 
-    static float velocityAlignment      = 0.05f;
-    static float positionAlignment      = 0.05f;
-    static float pathAlignment          = 0.1f;
-    static float avoidStrength          = 0.4f;
-    static float randomStrength         = 0.1f;
-    static float foodAttractionStrength = 0.2f;
-    static float foodDetectionRadius    = 100f;
+    static float velocityAlignment      = 0.05f;        // flock vel. align
+    static float positionAlignment      = 0.05f;        // flock pos. align
+    static float pathAlignment          = 0.1f;         // path align
+    static float avoidStrength          = 0.4f;         // close-flock avoid
+    static float randomStrength         = 0.1f;         // random movement
+    static float foodAttractionStrength = 0.2f;         // attr. to player placed food
+    static float foodDetectionRadius    = 100f;         
 
-    static float velocityDecay          = 0.985f;
-    static float accStrength            = 0.2f;
+    static float velocityDecay          = 0.985f;       // vel *= velocityDecay every update
+    static float accStrength            = 0.2f;         // acc. vector is set to this magnitude
 
-    static float maxVel                 = 5.0f;
+    static float maxVel                 = 5.0f;         // max vel. component (-maxVel to maxVel)
 
-    static float margin                 = 50.0f;
-    static float criticalMargin         = 5.0f;
+    static float margin                 = 50.0f;        // edge region that is steered away from
+    static float criticalMargin         = 5.0f;         // edge region that can not moved away from
 
     static Random rng = new Random();
 
