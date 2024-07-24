@@ -16,6 +16,7 @@ public class Swarm : Node2D
     QuadTree<Boid> boids;
     List<Boid> boidList = new List<Boid>();
     List<Sprite> spriteList = new List<Sprite>();
+    List<(Vector2 pos, int t)> food = new List<(Vector2, int)>();
 
     public override void _Ready()
     {
@@ -53,7 +54,14 @@ public class Swarm : Node2D
 
         // update each boid
         foreach (var b in boidList)
-            b.Update(boids, path);
+            b.Update(boids, path, food);
+
+        for (int i = food.Count - 1; i >= 0 ; i--)
+        {
+            food[i] = (food[i].pos, food[i].t + 1);
+            if (food[i].t > 200)
+                food.RemoveAt(i);
+        }
 
         // rebuild the quad-tree every frame (yes, this is nessecary)
         boids = new QuadTree<Boid>(new Rectangle(
@@ -68,5 +76,13 @@ public class Swarm : Node2D
             spriteList[i].Position = boidList[i].Position;
             spriteList[i].Rotation = boidList[i].vel.Angle();
         }
+    }
+    public override void _UnhandledInput(InputEvent input)
+    {
+        if(input is InputEventMouseButton btnEvent)
+            if(btnEvent.ButtonIndex == (int) ButtonList.Left)
+                food.Add((btnEvent.Position, 0));
+
+        base._UnhandledInput(input);
     }
 }

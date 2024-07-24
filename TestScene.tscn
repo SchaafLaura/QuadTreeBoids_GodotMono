@@ -81,5 +81,5 @@ curve = SubResource( 3 )
 
 [node name="SwarmManager" type="Node2D" parent="."]
 script = ExtResource( 1 )
-amount = 930
+amount = 568
 boidTexture = ExtResource( 2 )

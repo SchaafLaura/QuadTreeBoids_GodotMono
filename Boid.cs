@@ -1,27 +1,30 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class Boid : Vertex
 {
     public Vector2 acc { get; private set; } // acceleration
     public Vector2 vel { get; private set; } // velocity
 
-    static float closeRangeSq = 15f * 15f; // range to avoid
-    static float largeRange = 30f; // range to get close to
+    static float closeRangeSq           = 15f * 15f; // range to avoid
+    static float largeRange             = 30f; // range to get close to
 
-    static float velocityAlignment = 0.05f;
-    static float positionAlignment = 0.05f;
-    static float pathAlignment = 0.1f;
-    static float avoidStrength = 0.4f;
-    static float randomStrength = 0.1f;
+    static float velocityAlignment      = 0.05f;
+    static float positionAlignment      = 0.05f;
+    static float pathAlignment          = 0.1f;
+    static float avoidStrength          = 0.4f;
+    static float randomStrength         = 0.1f;
+    static float foodAttractionStrength = 0.2f;
+    static float foodDetectionRadius    = 100f;
 
-    static float velocityDecay = 0.985f;
-    static float accStrength = 0.2f;
+    static float velocityDecay          = 0.985f;
+    static float accStrength            = 0.2f;
 
-    static float maxVel = 5.0f;
+    static float maxVel                 = 5.0f;
 
-    static float margin = 50.0f;
-    static float criticalMargin = 5.0f;
+    static float margin                 = 50.0f;
+    static float criticalMargin         = 5.0f;
 
     static Random rng = new Random();
 
@@ -35,7 +38,7 @@ public class Boid : Vertex
     /// </summary>
     /// <param name="boids">The other boids</param>
     /// <param name="path">The path to follow</param>
-    public void Update(QuadTree<Boid> boids, Path2D path)
+    public void Update(QuadTree<Boid> boids, Path2D path, List<(Vector2 pos, int)> food)
     {
         // get surrounding boids
         var flock = boids.Query(Position, largeRange);
@@ -69,6 +72,23 @@ public class Boid : Vertex
         // find the closest point on curve
         var pathvel = path.Curve.InterpolateBaked(path.Curve.GetClosestOffset(Position)+10, true);
 
+        // find closest food
+        var foodPos = new Vector2();
+        var foodExists = false;
+        float record = float.MaxValue;
+        for(int i = 0; i < food.Count; i++)
+        {
+            var d = Position.DistanceSquaredTo(food[i].pos);
+            if (d > foodDetectionRadius * foodDetectionRadius)
+                continue;
+            if (d < record)
+            {
+                record = d;
+                foodPos = food[i].pos;
+                foodExists = true;
+            }
+        }
+
         // add all forces together
         acc =
             (flockAvg.vel - vel).Normalized() * velocityAlignment +
@@ -76,6 +96,9 @@ public class Boid : Vertex
             (flockAvg.closePos - Position).Normalized() * avoidStrength +
             (pathvel - Position).Normalized() * pathAlignment +
             (new Vector2(rng.Next(-100, 100), rng.Next(-100, 100))).Normalized() * randomStrength;
+
+        if (foodExists)
+            acc += (foodPos - Position).Normalized() * foodAttractionStrength;
 
         // if boid is too close to edge, steer away from it
         // this assumes the quadtree is positioned at 0, 0
