@@ -18,9 +18,9 @@ public class Boid : Vertex
     static float velocityDecay = 0.985f;
     static float accStrength = 0.2f;
 
-    static float maxVel = 2.0f;
+    static float maxVel = 5.0f;
 
-    static float margin = 10.0f;
+    static float margin = 50.0f;
     static float criticalMargin = 5.0f;
 
     static Random rng = new Random();
