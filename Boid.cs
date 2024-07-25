@@ -7,12 +7,13 @@ public class Boid : Vertex
     public Vector2 acc { get; private set; }            // acceleration
     public Vector2 vel { get; private set; }            // velocity
 
-    static float closeRangeSq           = 15f * 15f;    // range to avoid
-    static float largeRange             = 30f;          // range to get close to
+    static float closeRangeSq           = 10f * 10f;    // range to avoid
+    static float largeRange             = 20f;          // range to get close to
 
     static float velocityAlignment      = 0.05f;        // flock vel. align
     static float positionAlignment      = 0.05f;        // flock pos. align
     static float pathAlignment          = 0.1f;         // path align
+    static float pathLookAhead          = 0.003f;       // (0-1)
     static float avoidStrength          = 0.4f;         // close-flock avoid
     static float randomStrength         = 0.1f;         // random movement
     static float foodAttractionStrength = 0.2f;         // attr. to player placed food
@@ -24,6 +25,7 @@ public class Boid : Vertex
     static float maxVel                 = 5.0f;         // max vel. component (-maxVel to maxVel)
 
     static float margin                 = 50.0f;        // edge region that is steered away from
+    static float marginSteerStrength    = 2.0f;         // strength of edge steering
     static float criticalMargin         = 5.0f;         // edge region that can not moved away from
 
     static Random rng = new Random();
@@ -70,7 +72,9 @@ public class Boid : Vertex
             flockAvg.close);
 
         // find the closest point on curve
-        var pathvel = path.Curve.InterpolateBaked(path.Curve.GetClosestOffset(Position)+10, true);
+        var pathvel = path.Curve.InterpolateBaked
+            (path.Curve.GetClosestOffset(Position) + 
+            path.Curve.GetBakedLength() * pathLookAhead, true);
 
         // find closest food
         var foodPos = new Vector2();
@@ -100,16 +104,18 @@ public class Boid : Vertex
         if (foodExists)
             acc += (foodPos - Position).Normalized() * foodAttractionStrength;
 
+        
         // if boid is too close to edge, steer away from it
         // this assumes the quadtree is positioned at 0, 0
         if (Position.x < margin)
-            acc = new Vector2(Math.Abs(acc.x) * 2f, acc.y);
+            acc = new Vector2(Math.Abs(acc.x) * marginSteerStrength, acc.y);
         if (Position.y < margin)
-            acc = new Vector2(acc.x, Math.Abs(acc.y) * 2f);
+            acc = new Vector2(acc.x, Math.Abs(acc.y) * marginSteerStrength);
         if (Position.x > boids.boundary.Size.x - margin)
-            acc = new Vector2(-Math.Abs(acc.x) * 2f, acc.y);
+            acc = new Vector2(-Math.Abs(acc.x) * marginSteerStrength, acc.y);
         if (Position.y > boids.boundary.Size.y - margin)
-            acc = new Vector2(acc.x, -Math.Abs(acc.y) * 2f);
+            acc = new Vector2(acc.x, -Math.Abs(acc.y) * marginSteerStrength);
+        
 
         // first part of euler integration (updating velocity due to accel)
         acc = acc.Normalized() * accStrength;
