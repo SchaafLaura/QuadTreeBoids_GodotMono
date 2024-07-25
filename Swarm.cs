@@ -16,7 +16,7 @@ public class Swarm : Node2D
     QuadTree<Boid> boids;
     List<Boid> boidList = new List<Boid>();
     List<Sprite> spriteList = new List<Sprite>();
-    List<(Vector2 pos, int t)> food = new List<(Vector2, int)>();
+    List<(Vec2 pos, int t)> food = new List<(Vec2, int)>();
 
     public override void _Ready()
     {
@@ -26,21 +26,21 @@ public class Swarm : Node2D
 
         // setup spatial data structure
         boids = new QuadTree<Boid>(new Rectangle(
-            new Vector2(500, 500),
-            new Vector2(1000, 1000)));
+            new Vec2(500, 500),
+            new Vec2(1000, 1000)));
 
         // spawn some random boids
         var rng = new Random();
         for(int i = 0; i < amount; i++)
         {
-            var b = new Boid(new Vector2(rng.Next(0, 1000), rng.Next(0, 1000)));
+            var b = new Boid(rng.Next(0, 1000), rng.Next(0, 1000));
             boids.Insert(b);
             boidList.Add(b);
 
             // make some sprites to display the boids
             var s = new Sprite();
             s.Texture = boidTexture;
-            s.Position = b.Position;
+            s.Position = b.ToVector2();
             spriteList.Add(s);
             AddChild(s);
         }
@@ -65,15 +65,16 @@ public class Swarm : Node2D
 
         // rebuild the quad-tree every frame (yes, this is nessecary)
         boids = new QuadTree<Boid>(new Rectangle(
-            new Vector2(500, 500),
-            new Vector2(1000, 1000)));
+            new Vec2(500, 500),
+            new Vec2(1000, 1000)));
 
         for (int i = 0; i < boidList.Count; i++)
         {
+            //Debug.Print(boidList[i].ToString());
             boids.Insert(boidList[i]);
 
             // update sprite positions and rotations
-            spriteList[i].Position = boidList[i].Position;
+            spriteList[i].Position = boidList[i].ToVector2();
             spriteList[i].Rotation = boidList[i].vel.Angle();
         }
     }
@@ -81,7 +82,7 @@ public class Swarm : Node2D
     {
         if(input is InputEventMouseButton btnEvent)
             if(btnEvent.ButtonIndex == (int) ButtonList.Left)
-                food.Add((btnEvent.Position, 0));
+                food.Add((btnEvent.Position.ToVec2(), 0));
 
         base._UnhandledInput(input);
     }

@@ -1,10 +1,11 @@
 using Godot;
 using System.Collections.Generic;
+using System.Diagnostics;
 
-public class QuadTree<NodeType> where NodeType : Vertex
+internal class QuadTree<NodeType> where NodeType : Vec2
 {
     public Rectangle boundary { get; private set; }
-    int capacity = 1;       // how many vertecies fit in a rect
+    int capacity = 5;       // how many vertecies fit in a rect
     List<NodeType> nodes;   // the nodes inside this rect
     bool divided = false;   
 
@@ -28,8 +29,10 @@ public class QuadTree<NodeType> where NodeType : Vertex
     public bool Insert(NodeType node)
     {
         // don't insert if the node is not inside the boundary
-        if(!boundary.Contains(node.Position))
+        if (!boundary.Contains(node))
+        {
             return false;
+        }
 
         // insert, if there is still room
         if(nodes.Count < capacity)
@@ -57,7 +60,7 @@ public class QuadTree<NodeType> where NodeType : Vertex
     /// <param name="pos">Mid-point of the circle</param>
     /// <param name="r">Radius of the circle</param>
     /// <returns>A list of nodes that are inside the circle provided</returns>
-    public List<NodeType> Query(Vector2 pos, float r)
+    public List<NodeType> Query(Vec2 pos, float r)
     {
         var ret = new List<NodeType>();
 
@@ -65,7 +68,7 @@ public class QuadTree<NodeType> where NodeType : Vertex
             return ret;
 
         for(int i = 0; i < nodes.Count; i++)
-            if (pos.DistanceSquaredTo(nodes[i].Position) < r*r)
+            if (pos.DistanceSquaredTo(nodes[i]) < r*r)
                 ret.Add(nodes[i]);
 
         if (divided)
@@ -75,6 +78,7 @@ public class QuadTree<NodeType> where NodeType : Vertex
             ret.AddRange(SW.Query(pos, r));
             ret.AddRange(NW.Query(pos, r));
         }
+
         return ret;
     }
 
@@ -90,7 +94,7 @@ public class QuadTree<NodeType> where NodeType : Vertex
             return ret;
 
         for(int i = 0; i < nodes.Count; i++)
-            if (r.Contains(nodes[i].Position))
+            if (r.Contains(nodes[i]))
                 ret.Add(nodes[i]);
 
         if (divided)
@@ -106,9 +110,9 @@ public class QuadTree<NodeType> where NodeType : Vertex
     private void Divide()
     {
         divided = true;
-        NE = new QuadTree<NodeType>(new Rectangle(new Vector2(boundary.Position.x + boundary.Size.x / 4.0f, boundary.Position.y - boundary.Size.y / 4.0f), new Vector2(boundary.Size.x / 2, boundary.Size.y / 2)));
-        SE = new QuadTree<NodeType>(new Rectangle(new Vector2(boundary.Position.x + boundary.Size.x / 4.0f, boundary.Position.y + boundary.Size.y / 4.0f), new Vector2(boundary.Size.x / 2, boundary.Size.y / 2)));
-        SW = new QuadTree<NodeType>(new Rectangle(new Vector2(boundary.Position.x - boundary.Size.x / 4.0f, boundary.Position.y + boundary.Size.y / 4.0f), new Vector2(boundary.Size.x / 2, boundary.Size.y / 2)));
-        NW = new QuadTree<NodeType>(new Rectangle(new Vector2(boundary.Position.x - boundary.Size.x / 4.0f, boundary.Position.y - boundary.Size.y / 4.0f), new Vector2(boundary.Size.x / 2, boundary.Size.y / 2)));
+        NE = new QuadTree<NodeType>(new Rectangle(new Vec2(boundary.Position.x + boundary.Size.x / 4.0f, boundary.Position.y - boundary.Size.y / 4.0f), boundary.Size * 0.5f));
+        SE = new QuadTree<NodeType>(new Rectangle(new Vec2(boundary.Position.x + boundary.Size.x / 4.0f, boundary.Position.y + boundary.Size.y / 4.0f), boundary.Size * 0.5f));
+        SW = new QuadTree<NodeType>(new Rectangle(new Vec2(boundary.Position.x - boundary.Size.x / 4.0f, boundary.Position.y + boundary.Size.y / 4.0f), boundary.Size * 0.5f));
+        NW = new QuadTree<NodeType>(new Rectangle(new Vec2(boundary.Position.x - boundary.Size.x / 4.0f, boundary.Position.y - boundary.Size.y / 4.0f), boundary.Size * 0.5f));
     }
 }

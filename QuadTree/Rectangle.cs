@@ -3,19 +3,19 @@ using Godot;
 /// <summary>
 /// Axis aligned Rectangle with center at .Position and width/height .Size
 /// </summary>
-public class Rectangle
+internal class Rectangle
 {
-    public Vector2 Position { get; private set; } // center of rect
-    public Vector2 Size { get; private set; }     // width and height
+    public Vec2 Position { get; private set; } // center of rect
+    public Vec2 Size { get; private set; }     // width and height
 
-    private Vector2 halfSize;                     // half the width and height (for efficiency)
+    private Vec2 halfSize;                     // half the width and height (for efficiency)
 
     /// <summary>
     /// Constructor of the Rectangle class
     /// </summary>
     /// <param name="Position">Center point of the rectangle</param>
     /// <param name="Size">Width and height of the rectangle</param>
-    public Rectangle(Vector2 Position, Vector2 Size)
+    public Rectangle(Vec2 Position, Vec2 Size)
     {
         this.Position = Position;
         this.Size = Size;
@@ -43,7 +43,7 @@ public class Rectangle
     /// <param name="p">The position of the cirlce to check intersection with</param>
     /// <param name="r">The radius of the circle to check intersection with</param>
     /// <returns>True if this rectangle could intersect the circle</returns>
-    public bool Contains(Vector2 p, float r)
+    public bool Contains(Vec2 p, float r)
     {
         return
             p.x >= Position.x - halfSize.x - r &&
@@ -57,7 +57,7 @@ public class Rectangle
     /// </summary>
     /// <param name="p">The point to check against</param>
     /// <returns>True if this rectangle contains the point - false otherwise</returns>
-    public bool Contains(Vector2 p)
+    public bool Contains(Vec2 p)
     {
         return
             p.x >= Position.x - halfSize.x &&

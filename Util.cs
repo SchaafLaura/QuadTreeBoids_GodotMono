@@ -26,5 +26,10 @@ internal static class Util
 
         return new Vector2(x, y);
     }
+
+    public static Vec2 ToVec2(this Vector2 v)
+    {
+        return new Vec2(v.x, v.y);
+    }
 }
 

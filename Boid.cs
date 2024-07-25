@@ -1,11 +1,12 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
-public class Boid : Vertex
+internal class Boid : Vec2
 {
-    public Vector2 acc { get; private set; }            // acceleration
-    public Vector2 vel { get; private set; }            // velocity
+    public Vec2 acc { get; private set; } = new Vec2(0, 0); // acceleration
+    public Vec2 vel { get; private set; } = new Vec2(0, 0); // velocity
 
     static float closeRangeSq           = 10f * 10f;    // range to avoid
     static float largeRange             = 20f;          // range to get close to
@@ -30,7 +31,7 @@ public class Boid : Vertex
 
     static Random rng = new Random();
 
-    public Boid(Vector2 pos) : base(pos) 
+    public Boid(float x, float y) : base(x, y) 
     {
         // 
     }
@@ -40,49 +41,50 @@ public class Boid : Vertex
     /// </summary>
     /// <param name="boids">The other boids</param>
     /// <param name="path">The path to follow</param>
-    public void Update(QuadTree<Boid> boids, Path2D path, List<(Vector2 pos, int)> food)
+    public void Update(QuadTree<Boid> boids, Path2D path, List<(Vec2 pos, int)> food)
     {
         // get surrounding boids
-        var flock = boids.Query(Position, largeRange);
+        var flock = boids.Query(this, largeRange);
 
         // compute averages of 
         // - velocity
         // - position
         // - position of *very* close boids (that are to be avoided)
-        (Vector2 vel, Vector2 pos, Vector2 closePos, int close) flockAvg = (
-            new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0), 0);
+        (Vec2 vel, Vec2 pos, Vec2 closePos, int close) flockAvg = (
+            new Vec2(0, 0), new Vec2(0, 0), new Vec2(0, 0), 0);
         for(int i = 0; i < flock.Count; i++)
         {
             var other = flock[i];
 
-            flockAvg.vel += other.vel;
-            flockAvg.pos += other.Position;
-            if (Position.DistanceSquaredTo(other.Position) < closeRangeSq)
+            flockAvg.vel.Add(other.vel);
+            flockAvg.pos.Add(other);
+            if (DistanceSquaredTo(other) < closeRangeSq)
             {
-                flockAvg.closePos += other.Position;
+                flockAvg.closePos.Add(other);
                 flockAvg.close++;
             }
         }
 
         // divide by count to get average
-        flockAvg = (
-            flockAvg.vel / flock.Count, 
-            flockAvg.pos / flock.Count,
-            flockAvg.close > 0 ? flockAvg.closePos / flockAvg.close : flockAvg.closePos,
-            flockAvg.close);
+        flockAvg.vel.Divide(flock.Count);
+        flockAvg.pos.Divide(flock.Count);
+
+        if(flockAvg.close > 0)
+            flockAvg.closePos.Divide(flockAvg.close);
 
         // find the closest point on curve
         var pathvel = path.Curve.InterpolateBaked
-            (path.Curve.GetClosestOffset(Position) + 
-            path.Curve.GetBakedLength() * pathLookAhead, true);
+            (path.Curve.GetClosestOffset(ToVector2()) + 
+            path.Curve.GetBakedLength() * pathLookAhead, true).ToVec2();
 
+        
         // find closest food
-        var foodPos = new Vector2();
+        var foodPos = new Vec2(0, 0);
         var foodExists = false;
         float record = float.MaxValue;
         for(int i = 0; i < food.Count; i++)
         {
-            var d = Position.DistanceSquaredTo(food[i].pos);
+            var d = DistanceSquaredTo(food[i].pos);
             if (d > foodDetectionRadius * foodDetectionRadius)
                 continue;
             if (d < record)
@@ -92,50 +94,53 @@ public class Boid : Vertex
                 foodExists = true;
             }
         }
+        
 
         // add all forces together
         acc =
             (flockAvg.vel - vel).Normalized() * velocityAlignment +
-            (flockAvg.pos - Position).Normalized() * positionAlignment -
-            (flockAvg.closePos - Position).Normalized() * avoidStrength +
-            (pathvel - Position).Normalized() * pathAlignment +
-            (new Vector2(rng.Next(-100, 100), rng.Next(-100, 100))).Normalized() * randomStrength;
+            (flockAvg.pos - this).Normalized() * positionAlignment -
+            (flockAvg.closePos - this).Normalized() * avoidStrength +
+            (pathvel - this).Normalized() * pathAlignment +
+            RandomNormal() * randomStrength;
 
         if (foodExists)
-            acc += (foodPos - Position).Normalized() * foodAttractionStrength;
+            acc += (foodPos - this).Normalized() * foodAttractionStrength;
 
-        
         // if boid is too close to edge, steer away from it
         // this assumes the quadtree is positioned at 0, 0
-        if (Position.x < margin)
-            acc = new Vector2(Math.Abs(acc.x) * marginSteerStrength, acc.y);
-        if (Position.y < margin)
-            acc = new Vector2(acc.x, Math.Abs(acc.y) * marginSteerStrength);
-        if (Position.x > boids.boundary.Size.x - margin)
-            acc = new Vector2(-Math.Abs(acc.x) * marginSteerStrength, acc.y);
-        if (Position.y > boids.boundary.Size.y - margin)
-            acc = new Vector2(acc.x, -Math.Abs(acc.y) * marginSteerStrength);
+        if (x < margin)
+            acc.x = Math.Abs(acc.x) * marginSteerStrength;
+        if (y < margin)
+            acc.y = Math.Abs(acc.y) * marginSteerStrength;
+        if (x > boids.boundary.Size.x - margin)
+            acc.x = -Math.Abs(acc.x) * marginSteerStrength;
+        if (y > boids.boundary.Size.y - margin)
+            acc.y = -Math.Abs(acc.y) * marginSteerStrength;
         
 
         // first part of euler integration (updating velocity due to accel)
-        acc = acc.Normalized() * accStrength;
-        vel *= velocityDecay;
-        vel += acc;
-        vel = vel.Constrain(-maxVel, maxVel, -maxVel, maxVel);
+        acc.SetMag(accStrength);
+        vel.Multiply(velocityDecay);
+        vel.Add(acc);
+        vel.Constrain(-maxVel, maxVel, -maxVel, maxVel);
 
         // if boid is *very* close to edge, move away from it 
         // this assumes (again) the quadtree is positioned at 0, 0
-        if (Position.x < criticalMargin)
-            vel = new Vector2(Math.Abs(vel.x), vel.y);
-        if (Position.y < criticalMargin)
-            vel = new Vector2(vel.x, Math.Abs(vel.y) );
-        if (Position.x > boids.boundary.Size.x - criticalMargin)
-            vel = new Vector2(-Math.Abs(vel.x) , vel.y);
-        if (Position.y > boids.boundary.Size.y - criticalMargin)
-            vel = new Vector2(vel.x, -Math.Abs(vel.y));
+        if (x < criticalMargin)
+            vel.x = Math.Abs(vel.x);
+        if (y < criticalMargin)
+            vel.y = Math.Abs(vel.y);
+        if (x > boids.boundary.Size.x - criticalMargin)
+            vel.x = -Math.Abs(vel.x);
+        if (y > boids.boundary.Size.y - criticalMargin)
+            vel.y = -Math.Abs(vel.y);
+
+        acc.x *= acc.x;
+        acc.y *= acc.y;
 
         // second part of euler integration (updating position due to velocity)
-        Position += vel + 0.5f * new Vector2(acc.x * acc.x, acc.y * acc.y);
-        Position = Position.Constrain(0, boids.boundary.Size.x, 0, boids.boundary.Size.y);
+        Add(vel + acc * 0.5f);
+        Constrain(0, boids.boundary.Size.x, 0, boids.boundary.Size.y);
     }
 }
