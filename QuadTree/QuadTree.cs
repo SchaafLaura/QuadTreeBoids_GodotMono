@@ -5,7 +5,7 @@ using System.Diagnostics;
 internal class QuadTree<NodeType> where NodeType : Vec2
 {
     public Rectangle boundary { get; private set; }
-    int capacity = 5;       // how many vertecies fit in a rect
+    int capacity = 10;       // how many vertecies fit in a rect
     List<NodeType> nodes;   // the nodes inside this rect
     bool divided = false;   
 
@@ -67,8 +67,9 @@ internal class QuadTree<NodeType> where NodeType : Vec2
         if (!boundary.Contains(pos, r))
             return ret;
 
-        for(int i = 0; i < nodes.Count; i++)
-            if (pos.DistanceSquaredTo(nodes[i]) < r*r)
+        // checking only x should be fine right? floats are pretty much never equal
+        for (int i = 0; i < nodes.Count; i++)
+            if (nodes[i] != pos && pos.DistanceSquaredTo(nodes[i]) < r * r)
                 ret.Add(nodes[i]);
 
         if (divided)

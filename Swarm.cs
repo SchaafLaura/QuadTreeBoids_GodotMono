@@ -1,7 +1,9 @@
 using Godot;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 public class Swarm : Node2D
 {
@@ -14,9 +16,13 @@ public class Swarm : Node2D
     Path2D path;
 
     QuadTree<Boid> boids;
+    QuadTree<Boid> clonedTree;
     List<Boid> boidList = new List<Boid>();
     List<Sprite> spriteList = new List<Sprite>();
     List<(Vec2 pos, int t)> food = new List<(Vec2, int)>();
+
+    float w = 1900;
+    float h = 1000;
 
     public override void _Ready()
     {
@@ -26,14 +32,14 @@ public class Swarm : Node2D
 
         // setup spatial data structure
         boids = new QuadTree<Boid>(new Rectangle(
-            new Vec2(500, 500),
-            new Vec2(1000, 1000)));
+            new Vec2(w/2, h/2),
+            new Vec2(w, h)));
 
         // spawn some random boids
         var rng = new Random();
         for(int i = 0; i < amount; i++)
         {
-            var b = new Boid(rng.Next(0, 1000), rng.Next(0, 1000));
+            var b = new Boid(rng.Next(0, (int)w), rng.Next(0, (int)h));
             boids.Insert(b);
             boidList.Add(b);
 
@@ -52,9 +58,25 @@ public class Swarm : Node2D
         // one for updating, which uses the current quad-tree for efficient searching of the space
         // one for rebuilding the tree with the new positions and updating sprites
 
-        // update each boid
-        foreach (var b in boidList)
-            b.Update(boids, path, food);
+        var clonedList = new ConcurrentBag<Boid>();
+        var clonedListLock = new object();
+        Parallel.For(0, boidList.Count, () => new List<Boid>(), 
+        (i, _, localList) =>
+        {
+            var clone = boidList[i]; // should probably .Clone() but seems to work fine without
+            clone.Update(boids, path, food);
+            localList.Add(clone); // Add to thread-local list
+            return localList;
+        },
+        (localList) =>
+        {
+            foreach (var item in localList)
+                clonedList.Add(item); // Add each item to ConcurrentBag
+        });
+
+        boidList.Clear();
+        boidList.AddRange(clonedList);
+
 
         for (int i = food.Count - 1; i >= 0 ; i--)
         {
@@ -65,8 +87,8 @@ public class Swarm : Node2D
 
         // rebuild the quad-tree every frame (yes, this is nessecary)
         boids = new QuadTree<Boid>(new Rectangle(
-            new Vec2(500, 500),
-            new Vec2(1000, 1000)));
+            new Vec2(w / 2, h / 2),
+            new Vec2(w, h)));
 
         for (int i = 0; i < boidList.Count; i++)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Godot;
 
 internal class Vec2
@@ -6,18 +7,25 @@ internal class Vec2
     public static Vec2 operator +(Vec2 a, Vec2 b) => new Vec2(a.x + b.x, a.y + b.y);
     public static Vec2 operator -(Vec2 a, Vec2 b) => new Vec2(a.x - b.x, a.y - b.y);
     public static Vec2 operator *(Vec2 v, float f) => new Vec2(v.x * f, v.y * f);
+    public static bool operator ==(Vec2 a, Vec2 b) => a.x == b.x && a.y == b.y;
+    public static bool operator !=(Vec2 a, Vec2 b) => !(a == b);
 
-
-    private static Random rng = new Random();
-    public static Vec2 RandomNormal()
+    public static Vec2 Random()
     {
-        var x = rng.Next(-10000, 10000);
-        var y = rng.Next(-10000, 10000);
-        Vec2 v = new Vec2(x, y);
-        v.Normalize();
-        return v;
+        lock (Util.rng)
+        {
+            var rx = (float)Util.rng.NextDouble() - 0.5f;
+            var ry = (float)Util.rng.NextDouble() - 0.5f;
+            /*while (rx == 0 || ry == 0)
+            {
+                rx = (float)Util.rng.NextDouble() - 0.5f;
+                ry = (float)Util.rng.NextDouble() - 0.5f;
+            }*/
+            Vec2 v = new Vec2(rx, ry);
+            v.Normalize();
+            return v;
+        }
     }
-
 
     public float x, y;
     public Vec2(float x, float y)
@@ -102,4 +110,3 @@ internal class Vec2
         return ToVector2().Angle();
     }
 }
-

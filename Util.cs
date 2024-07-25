@@ -1,7 +1,9 @@
 ﻿using Godot;
+using System;
 
 internal static class Util
 {
+    public static Random rng = new Random();
     public static Vector3 Constrain(this Vector3 v, float xMin, float xMax, float yMin, float yMax, float zMin, float zMax)
     {
         float x = v.x < xMin ? xMin : v.x;
