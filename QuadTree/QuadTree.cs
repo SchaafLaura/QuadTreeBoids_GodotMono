@@ -110,6 +110,7 @@ internal class QuadTree<NodeType> where NodeType : Vec2
         return ret;
     }
 
+
     private void Divide()
     {
         divided = true;

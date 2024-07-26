@@ -50,10 +50,11 @@ internal class Boid : Vec2
     }
 
     /// <summary>
-    /// Updates the boid using the other boids and a path. Will crash if path is null - oopsie :3
+    /// Updates the boid using the other boids, a path and food. Will crash if path is null - oopsie :3
     /// </summary>
     /// <param name="boids">The other boids</param>
     /// <param name="path">The path to follow</param>
+    /// <param name="food">The food items to path towards</param>
     public void Update(QuadTree<Boid> boids, Path2D path, List<(Vec2 pos, int)> food)
     {
         /* process = !process;
@@ -112,7 +113,6 @@ internal class Boid : Vec2
         pathvel.x += path.Position.x;
         pathvel.y += path.Position.y;
 
-
         // find closest food
         var foodPos = new Vec2(0, 0);
         var foodExists = false;
@@ -135,8 +135,8 @@ internal class Boid : Vec2
                 goto FinishedFoodProcessing;
             }
         }
-    FinishedFoodProcessing:
-        //stuff
+        FinishedFoodProcessing:
+
         flockAvg.vel.Subtract(vel);
         flockAvg.vel.SetMag(velocityAlignment);
 
@@ -165,8 +165,8 @@ internal class Boid : Vec2
             acc.Add(Vec2.OfMagnitude(foodPos - this, foodAttractionStrength));
 
         /*} end of if(process)*/
+
         // if boid is too close to edge, steer away from it
-        // this assumes the quadtree is positioned at 0, 0
         if (x < boids.UpperLeft.x + margin)
             acc.x = Math.Abs(acc.x) * marginSteerStrength;
         if (y < boids.UpperLeft.y + margin)
@@ -184,7 +184,6 @@ internal class Boid : Vec2
         vel.Constrain(-maxVel, maxVel, -maxVel, maxVel);
 
         // if boid is *very* close to edge, move away from it 
-        // this assumes (again) the quadtree is positioned at 0, 0
         if (x < boids.UpperLeft.x + criticalMargin)
             vel.x = Math.Abs(vel.x);
         if (y < boids.UpperLeft.y + criticalMargin)
@@ -195,13 +194,16 @@ internal class Boid : Vec2
         if (y > boids.UpperLeft.y + boids.boundary.Size.y - criticalMargin)
             vel.y = -Math.Abs(vel.y);
 
-        /* acc.x *= acc.x;
-         acc.y *= acc.y;*/
+         acc.x *= acc.x * 0.5f;
+         acc.y *= acc.y * 0.5f;
 
-        // second part of euler integration (updating position due to velocity)
-        Add(vel + new Vec2(acc.x * acc.x, acc.y * acc.y) * 0.5f);
-        Constrain(
+        // second part of euler integration (updating position due to velocity and accelleration)
+        Add(vel);
+        Add(acc);
+
+        // this should not be necessary, but if any boids ever escape, I guess you can enable this...
+        /*Constrain(
             boids.UpperLeft.x, boids.UpperLeft.x + boids.boundary.Size.x,
-            boids.UpperLeft.y, boids.UpperLeft.y + boids.boundary.Size.y);
+            boids.UpperLeft.y, boids.UpperLeft.y + boids.boundary.Size.y);*/
     }
 }
