@@ -13,16 +13,19 @@ public class Swarm : Node2D
     [Export]
     Texture boidTexture;
 
+    [Export]
+    Texture foodTexture;
+
     Path2D path;
 
     QuadTree<Boid> boids;
-    QuadTree<Boid> clonedTree;
-    List<Boid> boidList = new List<Boid>();
-    List<Sprite> spriteList = new List<Sprite>();
-    List<(Vec2 pos, int t)> food = new List<(Vec2, int)>();
+    List<Boid> boidList             = new List<Boid>();
+    List<Sprite> spriteList         = new List<Sprite>();
+    List<(Vec2 pos, int t)> food    = new List<(Vec2, int)>();
+    List<Sprite> foodSpireList      = new List<Sprite>();
 
-    float w = 1900;
-    float h = 1000;
+    float w = 1920;
+    float h = 1080;
 
     public override void _Ready()
     {
@@ -48,6 +51,7 @@ public class Swarm : Node2D
             s.Texture = boidTexture;
             s.Position = b.ToVector2();
             spriteList.Add(s);
+            s.ZIndex++;
             AddChild(s);
         }
     }
@@ -77,12 +81,16 @@ public class Swarm : Node2D
         boidList.Clear();
         boidList.AddRange(clonedList);
 
-
         for (int i = food.Count - 1; i >= 0 ; i--)
         {
             food[i] = (food[i].pos, food[i].t + 1);
-            if (food[i].t > 200)
+            if (food[i].t > 3000)
+            {
                 food.RemoveAt(i);
+                RemoveChild(foodSpireList[i]);
+                foodSpireList.RemoveAt(i);
+            }
+            
         }
 
         // rebuild the quad-tree every frame (yes, this is nessecary)
@@ -102,10 +110,21 @@ public class Swarm : Node2D
     }
     public override void _UnhandledInput(InputEvent input)
     {
-        if(input is InputEventMouseButton btnEvent)
-            if(btnEvent.ButtonIndex == (int) ButtonList.Left)
-                food.Add((btnEvent.Position.ToVec2(), 0));
+        if (input is InputEventMouseButton btnEvent)
+            if (btnEvent.ButtonIndex == (int)ButtonList.Left)
+                AddFood(btnEvent.Position);
 
         base._UnhandledInput(input);
     }
+
+    private void AddFood(Vector2 pos)
+    {
+        food.Add((pos.ToVec2(), 0));
+        var s = new Sprite();
+        s.Texture = foodTexture;
+        s.Position = pos;
+        AddChild(s);
+        foodSpireList.Add(s);
+    }
+
 }
