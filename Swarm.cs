@@ -63,6 +63,7 @@ public class Swarm : Node2D
             // make some sprites to display the boids
             var s = new Sprite();
             s.Texture = boidTexture;
+
             s.Position = b.ToVector2();
             spriteList.Add(s);
             s.ZIndex++;

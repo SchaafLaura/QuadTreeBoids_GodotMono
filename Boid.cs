@@ -9,8 +9,11 @@ internal class Boid : Vec2
     public Vec2 acc { get; private set; } = new Vec2(0, 0); // acceleration
     public Vec2 vel { get; private set; } = new Vec2(0, 0); // velocity
 
-    static float closeRangeSq           = 15f * 15f;    // range to avoid
-    static float largeRange             = 30f;          // range to get close to
+
+    //public bool process = Util.rng.NextDouble() < 0.5;
+
+    static float closeRangeSq           = 12f * 12f;    // range to avoid
+    static float largeRange             = 20f;          // range to get close to
 
     static float velocityAlignment      = 0.05f;        // flock vel. align
     static float positionAlignment      = 0.05f;        // flock pos. align
@@ -53,6 +56,12 @@ internal class Boid : Vec2
     /// <param name="path">The path to follow</param>
     public void Update(QuadTree<Boid> boids, Path2D path, List<(Vec2 pos, int)> food)
     {
+        /* process = !process;
+
+         if (process)
+         {
+        */
+
         // get surrounding boids
         var flock = boids.Query(this, largeRange);
 
@@ -83,8 +92,11 @@ internal class Boid : Vec2
         }
         else
         {
-            flockAvg.pos = new Vec2(x, y);
-            flockAvg.vel = new Vec2(vel.x, vel.y);
+            flockAvg.pos.x = x;
+            flockAvg.pos.y = y;
+
+            flockAvg.vel.x = vel.x;
+            flockAvg.vel.y = vel.y;
         }
 
         if (flockAvg.close > 0)
@@ -92,49 +104,67 @@ internal class Boid : Vec2
 
         // find the closest point on curve in global space
         var pathvel = path.Curve.InterpolateBaked(
-            path.Curve.GetClosestOffset(ToVector2() - path.Position) + 
-            path.Curve.GetBakedLength() * pathLookAhead, 
+            path.Curve.GetClosestOffset(new Vector2(x - path.Position.x, y - path.Position.y)) +
+            path.Curve.GetBakedLength() * pathLookAhead,
             useCubicInterpolation)
-        .ToVec2() + path.Position.ToVec2();
+        .ToVec2();
+
+        pathvel.x += path.Position.x;
+        pathvel.y += path.Position.y;
+
 
         // find closest food
         var foodPos = new Vec2(0, 0);
         var foodExists = false;
         var record = float.MaxValue;
-        var ate = false;
         for (int i = 0; i < food.Count; i++)
         {
             var d = DistanceSquaredTo(food[i].pos);
             if (d > foodDetectionRadiusSq)
                 continue;
-            if (!ate && d < foodEatRadiusSq)
-            {
-                food[i] = (food[i].pos, food[i].Item2 + 1);
-                ate = true;
-            }
+            
             if (d < record)
             {
                 record = d;
                 foodPos = food[i].pos;
-                foodExists = true;  
+                foodExists = true;
+            }
+            if (d < foodEatRadiusSq)
+            {
+                food[i] = (food[i].pos, food[i].Item2 + 1);
+                goto FinishedFoodProcessing;
             }
         }
+    FinishedFoodProcessing:
+        //stuff
+        flockAvg.vel.Subtract(vel);
+        flockAvg.vel.SetMag(velocityAlignment);
 
-        // add all forces together
-        acc =
-            Vec2.OfMagnitude(flockAvg.vel - vel,        velocityAlignment) +
-            Vec2.OfMagnitude(flockAvg.pos - this,       positionAlignment) +
-            Vec2.OfMagnitude(pathvel - this,            pathAlignment) +
-            Vec2.OfMagnitude(Random(),                  randomStrength);
+        flockAvg.pos.Subtract(this);
+        flockAvg.pos.SetMag(positionAlignment);
 
-        if (flockAvg.close > 0)
-            acc +=
-            Vec2.OfMagnitude(flockAvg.closePos - this, -avoidStrength);
+        pathvel.Subtract(this);
+        pathvel.SetMag(pathAlignment);
+
+        acc.x = 0;
+        acc.y = 0;
+
+        acc.Add(flockAvg.vel);
+        acc.Add(flockAvg.pos);
+        acc.Add(pathvel);
+        acc.AddRandom(randomStrength);
+
+        if(flockAvg.close > 0)
+        {
+            flockAvg.closePos.Subtract(this);
+            flockAvg.closePos.SetMag(-avoidStrength);
+            acc.Add(flockAvg.closePos);
+        }
 
         if (foodExists)
-            acc +=
-            Vec2.OfMagnitude(foodPos - this,            foodAttractionStrength);
+            acc.Add(Vec2.OfMagnitude(foodPos - this, foodAttractionStrength));
 
+        /*} end of if(process)*/
         // if boid is too close to edge, steer away from it
         // this assumes the quadtree is positioned at 0, 0
         if (x < boids.UpperLeft.x + margin)
@@ -165,13 +195,13 @@ internal class Boid : Vec2
         if (y > boids.UpperLeft.y + boids.boundary.Size.y - criticalMargin)
             vel.y = -Math.Abs(vel.y);
 
-        acc.x *= acc.x;
-        acc.y *= acc.y;
+        /* acc.x *= acc.x;
+         acc.y *= acc.y;*/
 
         // second part of euler integration (updating position due to velocity)
-        Add(vel + acc * 0.5f);
+        Add(vel + new Vec2(acc.x * acc.x, acc.y * acc.y) * 0.5f);
         Constrain(
-            boids.UpperLeft.x, boids.UpperLeft.x + boids.boundary.Size.x, 
+            boids.UpperLeft.x, boids.UpperLeft.x + boids.boundary.Size.x,
             boids.UpperLeft.y, boids.UpperLeft.y + boids.boundary.Size.y);
     }
 }

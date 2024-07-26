@@ -44,6 +44,19 @@ internal class Vec2
     {
         return "("+x+","+y+")";
     }
+
+    public void AddRandom(float strength)
+    {
+        double rx, ry;
+        lock (Util.rng)
+        {
+            rx = Util.rng.NextDouble() - 0.5;
+            ry = Util.rng.NextDouble() - 0.5;
+        }
+        x += (float) rx;
+        y += (float) ry;
+    }
+
     public static Vec2 Add(Vec2 v1, Vec2 v2)
     {
         return new Vec2(v1.x + v2.x, v1.y + v2.y);
