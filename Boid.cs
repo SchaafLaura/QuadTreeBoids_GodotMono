@@ -75,6 +75,7 @@ internal class Boid : Vec2
             }
         }
 
+
         // divide by count to get average
         if (flock.Count > 0)
         {
