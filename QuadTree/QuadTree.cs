@@ -5,6 +5,7 @@ using System.Diagnostics;
 internal class QuadTree<NodeType> where NodeType : Vec2
 {
     public Rectangle boundary { get; private set; }
+    public Vec2 UpperLeft { get; private set; }
     int capacity = 10;       // how many vertecies fit in a rect
     List<NodeType> nodes;   // the nodes inside this rect
     bool divided = false;   
@@ -18,6 +19,7 @@ internal class QuadTree<NodeType> where NodeType : Vec2
     public QuadTree(Rectangle boundary)
     {
         this.boundary = boundary;
+        UpperLeft = boundary.Position - boundary.Size * 0.5f;
         nodes = new List<NodeType>();
     }
 

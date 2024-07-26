@@ -14,7 +14,7 @@ internal class Boid : Vec2
 
     static float velocityAlignment      = 0.05f;        // flock vel. align
     static float positionAlignment      = 0.05f;        // flock pos. align
-    static float pathAlignment          = 0.0f;         // path align
+    static float pathAlignment          = 0.1f;         // path align
     static float pathLookAhead          = 0.03f;        // (0-1) probably keep this below 0.1
     static bool  useCubicInterpolation  = false;        // interpolation for path lookahead linear or cubic
     static float avoidStrength          = 0.7f;         // close-flock avoid
@@ -28,7 +28,7 @@ internal class Boid : Vec2
 
     static float maxVel                 = 3.0f;         // max vel. component (-maxVel to maxVel)
 
-    static float margin                 = 50.0f;        // edge region that is steered away from
+    static float margin                 = 15.0f;        // edge region that is steered away from
     static float marginSteerStrength    = 2.0f;         // strength of edge steering
     static float criticalMargin         = 5.0f;         // edge region that can not moved away from
 
@@ -75,7 +75,6 @@ internal class Boid : Vec2
             }
         }
 
-
         // divide by count to get average
         if (flock.Count > 0)
         {
@@ -91,28 +90,33 @@ internal class Boid : Vec2
         if (flockAvg.close > 0)
             flockAvg.closePos.Divide(flockAvg.close);
 
-        // find the closest point on curve
+        // find the closest point on curve in global space
         var pathvel = path.Curve.InterpolateBaked(
-            path.Curve.GetClosestOffset(
-                ToVector2()) + path.Curve.GetBakedLength() * pathLookAhead, useCubicInterpolation)
-        .ToVec2();
+            path.Curve.GetClosestOffset(ToVector2() - path.Position) + 
+            path.Curve.GetBakedLength() * pathLookAhead, 
+            useCubicInterpolation)
+        .ToVec2() + path.Position.ToVec2();
 
         // find closest food
         var foodPos = new Vec2(0, 0);
         var foodExists = false;
-        float record = float.MaxValue;
+        var record = float.MaxValue;
+        var ate = false;
         for (int i = 0; i < food.Count; i++)
         {
             var d = DistanceSquaredTo(food[i].pos);
             if (d > foodDetectionRadiusSq)
                 continue;
+            if (!ate && d < foodEatRadiusSq)
+            {
+                food[i] = (food[i].pos, food[i].Item2 + 1);
+                ate = true;
+            }
             if (d < record)
             {
                 record = d;
                 foodPos = food[i].pos;
-                foodExists = true;
-                if (d < foodEatRadiusSq)
-                    food[i] = (food[i].pos, food[i].Item2 + 1);
+                foodExists = true;  
             }
         }
 
@@ -133,13 +137,14 @@ internal class Boid : Vec2
 
         // if boid is too close to edge, steer away from it
         // this assumes the quadtree is positioned at 0, 0
-        if (x < margin)
+        if (x < boids.UpperLeft.x + margin)
             acc.x = Math.Abs(acc.x) * marginSteerStrength;
-        if (y < margin)
+        if (y < boids.UpperLeft.y + margin)
             acc.y = Math.Abs(acc.y) * marginSteerStrength;
-        if (x > boids.boundary.Size.x - margin)
+
+        if (x > boids.UpperLeft.x + boids.boundary.Size.x - margin)
             acc.x = -Math.Abs(acc.x) * marginSteerStrength;
-        if (y > boids.boundary.Size.y - margin)
+        if (y > boids.UpperLeft.y + boids.boundary.Size.y - margin)
             acc.y = -Math.Abs(acc.y) * marginSteerStrength;
 
         // first part of euler integration (updating velocity due to accel)
@@ -150,13 +155,14 @@ internal class Boid : Vec2
 
         // if boid is *very* close to edge, move away from it 
         // this assumes (again) the quadtree is positioned at 0, 0
-        if (x < criticalMargin)
+        if (x < boids.UpperLeft.x + criticalMargin)
             vel.x = Math.Abs(vel.x);
-        if (y < criticalMargin)
+        if (y < boids.UpperLeft.y + criticalMargin)
             vel.y = Math.Abs(vel.y);
-        if (x > boids.boundary.Size.x - criticalMargin)
+
+        if (x > boids.UpperLeft.x + boids.boundary.Size.x - criticalMargin)
             vel.x = -Math.Abs(vel.x);
-        if (y > boids.boundary.Size.y - criticalMargin)
+        if (y > boids.UpperLeft.y + boids.boundary.Size.y - criticalMargin)
             vel.y = -Math.Abs(vel.y);
 
         acc.x *= acc.x;
@@ -164,6 +170,8 @@ internal class Boid : Vec2
 
         // second part of euler integration (updating position due to velocity)
         Add(vel + acc * 0.5f);
-        Constrain(0, boids.boundary.Size.x, 0, boids.boundary.Size.y);
+        Constrain(
+            boids.UpperLeft.x, boids.UpperLeft.x + boids.boundary.Size.x, 
+            boids.UpperLeft.y, boids.UpperLeft.y + boids.boundary.Size.y);
     }
 }

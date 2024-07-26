@@ -16,6 +16,14 @@ public class Swarm : Node2D
     [Export]
     Texture foodTexture;
 
+    [Export]
+    NodePath rectPath;
+    ColorRect rect;
+    Rectangle boundary;
+
+
+    [Export]
+    NodePath pathPath;
     Path2D path;
 
     QuadTree<Boid> boids;
@@ -24,25 +32,31 @@ public class Swarm : Node2D
     List<(Vec2 pos, int t)> food    = new List<(Vec2, int)>();
     List<Sprite> foodSpireList      = new List<Sprite>();
 
-    float w = 1920;
-    float h = 1080;
+    //float w = 1920;
+    //float h = 1080;
+    Vec2 pos;
+    Vec2 size;
 
     public override void _Ready()
     {
         // get the path the boids should swarm towards
-        path = GetNode<Path2D>("../SwarmPath");
-        Debug.Print(path.ToString());
+        path = GetNode<Path2D>(pathPath);
 
+        rect = GetNode<ColorRect>(rectPath);
+        pos = new Vec2(rect.RectGlobalPosition.x, rect.RectGlobalPosition.y);
+        size = new Vec2(rect.RectSize.x, rect.RectSize.y);
+
+        boundary = new Rectangle(pos + size * 0.5f, size);
         // setup spatial data structure
-        boids = new QuadTree<Boid>(new Rectangle(
-            new Vec2(w/2, h/2),
-            new Vec2(w, h)));
+        boids = new QuadTree<Boid>(boundary);
 
         // spawn some random boids
         var rng = new Random();
         for(int i = 0; i < amount; i++)
         {
-            var b = new Boid(rng.Next(0, (int)w), rng.Next(0, (int)h));
+            var b = new Boid(
+                rng.Next((int)pos.x, (int)(pos.x + size.x)),
+                rng.Next((int)pos.y, (int)(pos.y + size.y)));
             boids.Insert(b);
             boidList.Add(b);
 
@@ -92,12 +106,8 @@ public class Swarm : Node2D
             }
             
         }
-
         // rebuild the quad-tree every frame (yes, this is nessecary)
-        boids = new QuadTree<Boid>(new Rectangle(
-            new Vec2(w / 2, h / 2),
-            new Vec2(w, h)));
-
+        boids = new QuadTree<Boid>(boundary);
         for (int i = 0; i < boidList.Count; i++)
         {
             //Debug.Print(boidList[i].ToString());
@@ -111,7 +121,7 @@ public class Swarm : Node2D
     public override void _UnhandledInput(InputEvent input)
     {
         if (input is InputEventMouseButton btnEvent)
-            if (btnEvent.ButtonIndex == (int)ButtonList.Left)
+            if (btnEvent.Pressed && btnEvent.ButtonIndex == (int)ButtonList.Left)
                 AddFood(btnEvent.Position);
 
         base._UnhandledInput(input);

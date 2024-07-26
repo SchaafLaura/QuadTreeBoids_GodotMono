@@ -6,22 +6,27 @@
 
 [sub_resource type="Curve2D" id=3]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 323, 216, 0, 0, 0, 0, 232, 342, 0, 0, 0, 0, 200, 567, 0, 0, 0, 0, 270, 713, 0, 0, 0, 0, 472, 793, 0, 0, 0, 0, 641, 811, 0, 0, 0, 0, 799, 718, 0, 0, 0, 0, 893, 572, 0, 0, 0, 0, 1001, 378, 0, 0, 0, 0, 1094, 264, 0, 0, 0, 0, 1245, 206, 0, 0, 0, 0, 1419, 231, 0, 0, 0, 0, 1550, 284, 0, 0, 0, 0, 1694, 426, 0, 0, 0, 0, 1724, 597, 0, 0, 0, 0, 1626, 748, 0, 0, 0, 0, 1457, 816, 0, 0, 0, 0, 1273, 811, 0, 0, 0, 0, 1072, 763, 0, 0, 0, 0, 961, 635, 0, 0, 0, 0, 855, 385, 0, 0, 0, 0, 782, 269, 0, 0, 0, 0, 628, 151, 0, 0, 0, 0, 505, 128, 0, 0, 0, 0, 323, 216 )
+"points": PoolVector2Array( 0, 0, 0, 0, 250, 791, 0, 0, 0, 0, 199, 744, 0, 0, 0, 0, 189, 686, 0, 0, 0, 0, 193, 622, 0, 0, 0, 0, 236, 602, 0, 0, 0, 0, 223, 562, 0, 0, 0, 0, 176, 542, 0, 0, 0, 0, 213, 498, 0, 0, 0, 0, 230, 461, 0, 0, 0, 0, 872, 683, 0, 0, 0, 0, 1017, 676, 0, 0, 0, 0, 1239, 481, 0, 0, 0, 0, 1477, 703, 0, 0, 0, 0, 1673, 770, 0, 0, 0, 0, 1501, 858, 0, 0, 0, 0, 892, 858, 0, 0, 0, 0, 744, 848, 0, 0, 0, 0, 526, 868, 0, 0, 0, 0, 324, 848, 0, 0, 0, 0, 250, 791 )
 }
 
 [node name="root" type="Node2D"]
 
 [node name="ColorRect" type="ColorRect" parent="."]
-margin_right = 2487.0
-margin_bottom = 1501.0
+margin_left = 672.0
+margin_top = 238.0
+margin_right = 2320.0
+margin_bottom = 762.0
 mouse_filter = 2
 color = Color( 0.145098, 0.27451, 0.329412, 1 )
 
 [node name="SwarmPath" type="Path2D" parent="."]
+position = Vector2( 597, -169 )
 curve = SubResource( 3 )
 
 [node name="SwarmManager" type="Node2D" parent="."]
 script = ExtResource( 1 )
-amount = 3509
+amount = 1945
 boidTexture = ExtResource( 2 )
 foodTexture = ExtResource( 4 )
+rectPath = NodePath("../ColorRect")
+pathPath = NodePath("../SwarmPath")
