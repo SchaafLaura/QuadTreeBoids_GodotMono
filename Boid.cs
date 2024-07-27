@@ -104,9 +104,8 @@ internal class Boid : Vec2
             flockAvg.closePos.Divide(flockAvg.close);
 
         // find the closest point on curve in global space
-        Vector2 thisinPathSpace = path.ToLocal(new Vector2(x, y));
         var pathvelVector = path.Curve.InterpolateBaked(
-            path.Curve.GetClosestOffset(thisinPathSpace) +
+            path.Curve.GetClosestOffset(path.ToLocal(new Vector2(x, y))) +
             path.Curve.GetBakedLength() * pathLookAhead,
             useCubicInterpolation);
 

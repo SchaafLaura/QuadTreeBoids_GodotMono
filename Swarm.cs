@@ -133,6 +133,9 @@ public class Swarm : Node2D
 
     private void AddFood(Vector2 pos)
     {
+        if (pos.x < this.pos.x || pos.y < this.pos.y ||
+            pos.x > this.pos.x + this.size.x || pos.y > this.pos.y + this.size.y)
+            return;
         food.Add((pos.ToVec2(), 0));
         var s = new Sprite();
         s.Texture = foodTexture;

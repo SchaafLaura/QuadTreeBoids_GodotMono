@@ -1,8 +1,12 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Swarm.cs" type="Script" id=1]
 [ext_resource path="res://sprites/bee.png" type="Texture" id=2]
+[ext_resource path="res://sprites/fish.png" type="Texture" id=3]
 [ext_resource path="res://sprites/food.png" type="Texture" id=4]
+[ext_resource path="res://sprites/frog.png" type="Texture" id=5]
+[ext_resource path="res://sprites/flowers.png" type="Texture" id=6]
+[ext_resource path="res://sprites/flies.png" type="Texture" id=7]
 
 [sub_resource type="Curve2D" id=3]
 _data = {
@@ -11,24 +15,80 @@ _data = {
 
 [node name="root" type="Node2D"]
 
+[node name="background" type="ColorRect" parent="."]
+margin_left = -1.0
+margin_top = -3.0
+margin_right = 2069.0
+margin_bottom = 1363.0
+rect_pivot_offset = Vector2( -792, -404 )
+mouse_filter = 2
+color = Color( 0.219608, 0.141176, 0.313726, 1 )
+
 [node name="ColorRect" type="ColorRect" parent="."]
-margin_left = 9.0
-margin_top = 8.0
-margin_right = 1901.0
-margin_bottom = 1034.0
+margin_left = -2.0
+margin_top = 11.0
+margin_right = 1016.0
+margin_bottom = 571.0
+rect_pivot_offset = Vector2( -792, -404 )
+mouse_filter = 2
+color = Color( 0.137255, 0.301961, 0.14902, 1 )
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+margin_left = 1030.0
+margin_top = 18.0
+margin_right = 1862.0
+margin_bottom = 925.0
+rect_pivot_offset = Vector2( -792, -404 )
+mouse_filter = 2
+color = Color( 0.282353, 0.490196, 0.721569, 1 )
+
+[node name="ColorRect3" type="ColorRect" parent="."]
+margin_left = 14.0
+margin_top = 593.0
+margin_right = 1021.0
+margin_bottom = 917.0
+rect_pivot_offset = Vector2( -792, -404 )
 mouse_filter = 2
 color = Color( 0.145098, 0.27451, 0.329412, 1 )
 
 [node name="SwarmPath" type="Path2D" parent="."]
-position = Vector2( 115, 72 )
+position = Vector2( 59, -30 )
 rotation = -6.28319
-scale = Vector2( 0.635, 0.427 )
+scale = Vector2( 0.470622, 0.427 )
+curve = SubResource( 3 )
+
+[node name="SwarmPath2" type="Path2D" parent="."]
+position = Vector2( 1291, -100 )
+rotation = 0.328122
+scale = Vector2( 0.343, 0.641 )
+curve = SubResource( 3 )
+
+[node name="SwarmPath3" type="Path2D" parent="."]
+position = Vector2( 193, 897 )
+rotation = 1.30202
+scale = Vector2( -0.07, -0.464 )
 curve = SubResource( 3 )
 
 [node name="SwarmManager" type="Node2D" parent="."]
 script = ExtResource( 1 )
-amount = 4021
+amount = 1378
 boidTexture = ExtResource( 2 )
-foodTexture = ExtResource( 4 )
+foodTexture = ExtResource( 6 )
 rectPath = NodePath("../ColorRect")
 pathPath = NodePath("../SwarmPath")
+
+[node name="SwarmManager2" type="Node2D" parent="."]
+script = ExtResource( 1 )
+amount = 304
+boidTexture = ExtResource( 3 )
+foodTexture = ExtResource( 4 )
+rectPath = NodePath("../ColorRect2")
+pathPath = NodePath("../SwarmPath2")
+
+[node name="SwarmManager3" type="Node2D" parent="."]
+script = ExtResource( 1 )
+amount = 77
+boidTexture = ExtResource( 5 )
+foodTexture = ExtResource( 7 )
+rectPath = NodePath("../ColorRect3")
+pathPath = NodePath("../SwarmPath3")
