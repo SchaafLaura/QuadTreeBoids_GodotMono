@@ -78,16 +78,10 @@ rect_pivot_offset = Vector2( -792, -404 )
 mouse_filter = 2
 color = Color( 0.145098, 0.27451, 0.329412, 1 )
 
-[node name="FrogPath" type="Path2D" parent="Frogs"]
-position = Vector2( -58, 1093 )
-rotation = -1.57254
-scale = Vector2( 0.262867, 0.800596 )
-curve = SubResource( 3 )
-
 [node name="FrogManager" type="Node2D" parent="Frogs"]
 script = ExtResource( 1 )
 amount = 77
 boidTexture = ExtResource( 5 )
 foodTexture = ExtResource( 7 )
 rectPath = NodePath("../FrogArea")
-pathPath = NodePath("../FrogPath")
+pathPath = NodePath("")
