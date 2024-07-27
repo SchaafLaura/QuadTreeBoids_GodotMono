@@ -104,14 +104,14 @@ internal class Boid : Vec2
             flockAvg.closePos.Divide(flockAvg.close);
 
         // find the closest point on curve in global space
-        var pathvel = path.Curve.InterpolateBaked(
-            path.Curve.GetClosestOffset(new Vector2(x - path.Position.x, y - path.Position.y)) +
+        Vector2 thisinPathSpace = path.ToLocal(new Vector2(x, y));
+        var pathvelVector = path.Curve.InterpolateBaked(
+            path.Curve.GetClosestOffset(thisinPathSpace) +
             path.Curve.GetBakedLength() * pathLookAhead,
-            useCubicInterpolation)
-        .ToVec2();
+            useCubicInterpolation);
 
-        pathvel.x += path.Position.x;
-        pathvel.y += path.Position.y;
+        pathvelVector = path.ToGlobal(pathvelVector);
+        var pathvel = pathvelVector.ToVec2();
 
         // find closest food
         var foodPos = new Vec2(0, 0);
