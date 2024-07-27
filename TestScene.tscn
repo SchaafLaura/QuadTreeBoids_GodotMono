@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Swarm.cs" type="Script" id=1]
 [ext_resource path="res://sprites/bee.png" type="Texture" id=2]
@@ -7,10 +7,16 @@
 [ext_resource path="res://sprites/frog.png" type="Texture" id=5]
 [ext_resource path="res://sprites/flowers.png" type="Texture" id=6]
 [ext_resource path="res://sprites/flies.png" type="Texture" id=7]
+[ext_resource path="res://sprites/rock.png" type="Texture" id=8]
 
 [sub_resource type="Curve2D" id=3]
 _data = {
 "points": PoolVector2Array( 0, 0, 0, 0, 250, 791, 0, 0, 0, 0, 199, 744, 0, 0, 0, 0, 189, 686, 0, 0, 0, 0, 193, 622, 0, 0, 0, 0, 236, 602, 0, 0, 0, 0, 223, 562, 0, 0, 0, 0, 176, 542, 0, 0, 0, 0, 213, 498, 0, 0, 0, 0, 230, 461, 0, 0, 0, 0, 316, 428, 0, 0, 0, 0, 409, 350, 0, 0, 0, 0, 570, 344, 0, 0, 0, 0, 719, 299, 0, 0, 0, 0, 857, 289, 0, 0, 0, 0, 963.512, 350.897, 0, 0, 0, 0, 1069, 322, 0, 0, 0, 0, 1240, 372, 0, 0, 0, 0, 1336, 362, 0, 0, 0, 0, 1329, 445, 0, 0, 0, 0, 1445, 483, 0, 0, 0, 0, 1490, 564, 0, 0, 0, 0, 1588, 579, 0, 0, 0, 0, 1628, 672, 0, 0, 0, 0, 1673, 770, 0, 0, 0, 0, 1596, 979, 0, 0, 0, 0, 1462, 1085, 0, 0, 0, 0, 1278, 1103, 0, 0, 0, 0, 1165, 1141, 0, 0, 0, 0, 1067, 1131, 0, 0, 0, 0, 963.683, 1162.83, 0, 0, 0, 0, 878, 1153, 0, 0, 0, 0, 744, 1146, 0, 0, 0, 0, 648, 1108, 0, 0, 0, 0, 595, 967, 0, 0, 0, 0, 477, 826, 0, 0, 0, 0, 324, 848, 0, 0, 0, 0, 250, 791 )
+}
+
+[sub_resource type="Curve2D" id=4]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 552, 792, 0, 0, 0, 0, 528, 816, 0, 0, 0, 0, 528, 824, 0, 0, 0, 0, 544, 836, 0, 0, 0, 0, 552, 848, 0, 0, 0, 0, 544, 856, 0, 0, 0, 0, 544, 864, 0, 0, 0, 0, 568, 880, 0, 0, 0, 0, 576, 880, 0, 0, 0, 0, 592, 872, 0, 0, 0, 0, 600, 856, 0, 0, 0, 0, 616, 848, 0, 0, 0, 0, 616, 840, 0, 0, 0, 0, 620, 824, 0, 0, 0, 0, 608, 816, 0, 0, 0, 0, 616, 800, 0, 0, 0, 0, 608, 792, 0, 0, 0, 0, 596, 792, 0, 0, 0, 0, 584, 784, 0, 0, 0, 0, 576, 784, 0, 0, 0, 0, 568, 792, 0, 0, 0, 0, 552, 792 )
 }
 
 [node name="root" type="Node2D"]
@@ -38,10 +44,11 @@ curve = SubResource( 3 )
 
 [node name="BeeManager" type="Node2D" parent="Bees"]
 script = ExtResource( 1 )
-amount = 1378
+amount = 924
 boidTexture = ExtResource( 2 )
 foodTexture = ExtResource( 6 )
 rectPath = NodePath("../BeeArea")
+colliderPath = NodePath("")
 pathPath = NodePath("../BeePath")
 
 [node name="Fish" type="Node" parent="."]
@@ -62,7 +69,7 @@ curve = SubResource( 3 )
 
 [node name="FishManager" type="Node2D" parent="Fish"]
 script = ExtResource( 1 )
-amount = 304
+amount = 918
 boidTexture = ExtResource( 3 )
 foodTexture = ExtResource( 4 )
 rectPath = NodePath("../FishArea")
@@ -80,8 +87,18 @@ color = Color( 0.145098, 0.27451, 0.329412, 1 )
 
 [node name="FrogManager" type="Node2D" parent="Frogs"]
 script = ExtResource( 1 )
-amount = 77
+amount = 306
 boidTexture = ExtResource( 5 )
 foodTexture = ExtResource( 7 )
 rectPath = NodePath("../FrogArea")
-pathPath = NodePath("")
+colliderPath = NodePath("../RockCollider")
+
+[node name="Rock" type="Sprite" parent="Frogs"]
+position = Vector2( 560, 840 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 8 )
+
+[node name="RockCollider" type="Path2D" parent="Frogs"]
+position = Vector2( -576, -824 )
+scale = Vector2( 2, 2 )
+curve = SubResource( 4 )

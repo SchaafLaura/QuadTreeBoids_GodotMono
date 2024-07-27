@@ -21,6 +21,11 @@ public class Swarm : Node2D
     ColorRect rect;
     Rectangle boundary;
 
+    [Export]
+    NodePath colliderPath;
+    Vector2[] colliderPolygon;
+    Transform colliderTransform;
+
 
     [Export]
     NodePath pathPath;
@@ -38,7 +43,37 @@ public class Swarm : Node2D
     public override void _Ready()
     {
         // get the path the boids should swarm towards
-        path = GetNode<Path2D>(pathPath);
+        if(pathPath != null)
+        {
+            path = GetNode<Path2D>(pathPath);
+            var pathPoints = path.Curve.GetBakedPoints();
+
+            for (int i = 0; i < pathPoints.Length; i++)
+                pathPoints[i] =  path.ToGlobal(pathPoints[i]);
+
+            path = new Path2D();
+            for (int i = 0; i < pathPoints.Length; i++)
+                path.Curve.AddPoint(pathPoints[i]);
+
+            
+            
+        }
+            
+
+        if(colliderPath != null)
+        {
+            Debug.Print(colliderPath.ToString());
+            var c = GetNode<Path2D>(colliderPath);
+            if(c != null)
+            {
+                colliderPolygon = c.Curve.GetBakedPoints();
+
+                for(int i = 0; i < colliderPolygon.Length; i++)
+                    colliderPolygon[i] = c.ToGlobal(colliderPolygon[i]);
+            }
+        }
+        
+
 
         // get the rect defining the position and size of the area where the BOIDs live
         rect = GetNode<ColorRect>(rectPath);
@@ -58,6 +93,11 @@ public class Swarm : Node2D
             var b = new Boid(
                 rng.Next((int)pos.x, (int)(pos.x + size.x)),
                 rng.Next((int)pos.y, (int)(pos.y + size.y)));
+
+            if (colliderPolygon != null && Geometry.IsPointInPolygon(b.ToVector2(), colliderPolygon))
+                continue;
+
+
             boids.Insert(b);
             boidList.Add(b);
 
@@ -72,6 +112,9 @@ public class Swarm : Node2D
             s.ZIndex++;
             AddChild(s);
         }
+
+
+
     }
 
     public override void _PhysicsProcess(float delta)
@@ -85,7 +128,7 @@ public class Swarm : Node2D
         (i, _, localList) =>
         {
             var boid = boidList[i];
-            boid.Update(boids, path, food);
+            boid.Update(boids, path, food, colliderPolygon);
             localList.Add(boid);
             return localList;
         },
@@ -94,6 +137,7 @@ public class Swarm : Node2D
             foreach (var boid in localList)
                 threadSafeBag.Add(boid); // Aggregate all boids that have been updated
         });
+
 
         boidList.Clear();
         boidList.AddRange(threadSafeBag);

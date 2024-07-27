@@ -15,8 +15,8 @@ internal class Boid : Vec2
     static float closeRangeSq           = 12f * 12f;    // range to avoid
     static float largeRange             = 20f;          // range to get close to
 
-    static float velocityAlignment      = 0.05f;        // flock vel. align
-    static float positionAlignment      = 0.05f;        // flock pos. align
+    static float velocityAlignment      = 0.1f;        // flock vel. align
+    static float positionAlignment      = 0.1f;        // flock pos. align
     static float pathAlignment          = 0.1f;         // path align
     static float pathLookAhead          = 0.03f;        // (0-1) probably keep this below 0.1
     static bool  useCubicInterpolation  = false;        // interpolation for path lookahead linear or cubic
@@ -55,7 +55,7 @@ internal class Boid : Vec2
     /// <param name="boids">The other boids</param>
     /// <param name="path">The path to follow</param>
     /// <param name="food">The food items to path towards</param>
-    public void Update(QuadTree<Boid> boids, Path2D path, List<(Vec2 pos, int)> food)
+    public void Update(QuadTree<Boid> boids, Path2D path, List<(Vec2 pos, int)> food, Vector2[] polygonCollider)
     {
         /* process = !process;
 
@@ -107,11 +107,11 @@ internal class Boid : Vec2
         Vec2 pathvel;
         if (path != null) {
             var pathvelVector = path.Curve.InterpolateBaked(
-                path.Curve.GetClosestOffset(path.ToLocal(new Vector2(x, y))) +
+                path.Curve.GetClosestOffset(/*path.ToLocal(*/new Vector2(x, y)/*)*/) +
                 path.Curve.GetBakedLength() * pathLookAhead,
                 useCubicInterpolation);
 
-            pathvelVector = path.ToGlobal(pathvelVector);
+            //pathvelVector = path.ToGlobal(pathvelVector);
             pathvel = pathvelVector.ToVec2();
         }
         else
@@ -203,13 +203,34 @@ internal class Boid : Vec2
          acc.x *= acc.x * 0.5f;
          acc.y *= acc.y * 0.5f;
 
+        
+
+        
+
         // second part of euler integration (updating position due to velocity and accelleration)
         Add(vel);
         Add(acc);
 
+        // resolve collisions
+        if (Geometry.IsPointInPolygon(ToVector2(), polygonCollider))
+        {
+            vel.x *= -1;
+            vel.y *= -1;
+            Add(vel);
+        }
+        int k = 0;
+        while (Geometry.IsPointInPolygon(ToVector2(), polygonCollider))
+        {
+            Add(vel);
+            Subtract(acc);
+            if (k++ > 100)
+                break;
+        }
+
+
         // this should not be necessary, but if any boids ever escape, I guess you can enable this...
-        /*Constrain(
+        Constrain(
             boids.UpperLeft.x, boids.UpperLeft.x + boids.boundary.Size.x,
-            boids.UpperLeft.y, boids.UpperLeft.y + boids.boundary.Size.y);*/
+            boids.UpperLeft.y, boids.UpperLeft.y + boids.boundary.Size.y);
     }
 }
