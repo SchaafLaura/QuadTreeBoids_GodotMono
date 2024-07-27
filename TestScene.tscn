@@ -16,79 +16,78 @@ _data = {
 [node name="root" type="Node2D"]
 
 [node name="background" type="ColorRect" parent="."]
-margin_left = -1.0
-margin_top = -3.0
-margin_right = 2069.0
-margin_bottom = 1363.0
+margin_right = 1920.0
+margin_bottom = 1080.0
 rect_pivot_offset = Vector2( -792, -404 )
 mouse_filter = 2
 color = Color( 0.219608, 0.141176, 0.313726, 1 )
 
-[node name="ColorRect" type="ColorRect" parent="."]
-margin_left = -2.0
-margin_top = 11.0
+[node name="Bees" type="Node" parent="."]
+
+[node name="BeeArea" type="ColorRect" parent="Bees"]
 margin_right = 1016.0
-margin_bottom = 571.0
+margin_bottom = 570.0
 rect_pivot_offset = Vector2( -792, -404 )
 mouse_filter = 2
 color = Color( 0.137255, 0.301961, 0.14902, 1 )
 
-[node name="ColorRect2" type="ColorRect" parent="."]
-margin_left = 1030.0
-margin_top = 18.0
-margin_right = 1862.0
-margin_bottom = 925.0
-rect_pivot_offset = Vector2( -792, -404 )
-mouse_filter = 2
-color = Color( 0.282353, 0.490196, 0.721569, 1 )
-
-[node name="ColorRect3" type="ColorRect" parent="."]
-margin_left = 14.0
-margin_top = 593.0
-margin_right = 1021.0
-margin_bottom = 917.0
-rect_pivot_offset = Vector2( -792, -404 )
-mouse_filter = 2
-color = Color( 0.145098, 0.27451, 0.329412, 1 )
-
-[node name="SwarmPath" type="Path2D" parent="."]
+[node name="BeePath" type="Path2D" parent="Bees"]
 position = Vector2( 59, -30 )
-rotation = -6.28319
 scale = Vector2( 0.470622, 0.427 )
 curve = SubResource( 3 )
 
-[node name="SwarmPath2" type="Path2D" parent="."]
-position = Vector2( 1291, -100 )
-rotation = 0.328122
-scale = Vector2( 0.343, 0.641 )
-curve = SubResource( 3 )
-
-[node name="SwarmPath3" type="Path2D" parent="."]
-position = Vector2( 193, 897 )
-rotation = 1.30202
-scale = Vector2( -0.07, -0.464 )
-curve = SubResource( 3 )
-
-[node name="SwarmManager" type="Node2D" parent="."]
+[node name="BeeManager" type="Node2D" parent="Bees"]
 script = ExtResource( 1 )
 amount = 1378
 boidTexture = ExtResource( 2 )
 foodTexture = ExtResource( 6 )
-rectPath = NodePath("../ColorRect")
-pathPath = NodePath("../SwarmPath")
+rectPath = NodePath("../BeeArea")
+pathPath = NodePath("../BeePath")
 
-[node name="SwarmManager2" type="Node2D" parent="."]
+[node name="Fish" type="Node" parent="."]
+
+[node name="FishArea" type="ColorRect" parent="Fish"]
+margin_left = 1036.0
+margin_right = 1920.0
+margin_bottom = 1080.0
+rect_pivot_offset = Vector2( -792, -404 )
+mouse_filter = 2
+color = Color( 0.282353, 0.490196, 0.721569, 1 )
+
+[node name="FishPath" type="Path2D" parent="Fish"]
+position = Vector2( 1297.91, -197.32 )
+rotation = 0.328122
+scale = Vector2( 0.484047, 0.967483 )
+curve = SubResource( 3 )
+
+[node name="FishManager" type="Node2D" parent="Fish"]
 script = ExtResource( 1 )
 amount = 304
 boidTexture = ExtResource( 3 )
 foodTexture = ExtResource( 4 )
-rectPath = NodePath("../ColorRect2")
-pathPath = NodePath("../SwarmPath2")
+rectPath = NodePath("../FishArea")
+pathPath = NodePath("../FishPath")
 
-[node name="SwarmManager3" type="Node2D" parent="."]
+[node name="Frogs" type="Node" parent="."]
+
+[node name="FrogArea" type="ColorRect" parent="Frogs"]
+margin_top = 590.0
+margin_right = 1016.0
+margin_bottom = 1080.0
+rect_pivot_offset = Vector2( -792, -404 )
+mouse_filter = 2
+color = Color( 0.145098, 0.27451, 0.329412, 1 )
+
+[node name="FrogPath" type="Path2D" parent="Frogs"]
+position = Vector2( -58, 1093 )
+rotation = -1.57254
+scale = Vector2( 0.262867, 0.800596 )
+curve = SubResource( 3 )
+
+[node name="FrogManager" type="Node2D" parent="Frogs"]
 script = ExtResource( 1 )
 amount = 77
 boidTexture = ExtResource( 5 )
 foodTexture = ExtResource( 7 )
-rectPath = NodePath("../ColorRect3")
-pathPath = NodePath("../SwarmPath3")
+rectPath = NodePath("../FrogArea")
+pathPath = NodePath("../FrogPath")
