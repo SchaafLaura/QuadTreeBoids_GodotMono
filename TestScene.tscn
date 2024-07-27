@@ -16,7 +16,7 @@ _data = {
 
 [sub_resource type="Curve2D" id=4]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 552, 792, 0, 0, 0, 0, 528, 816, 0, 0, 0, 0, 528, 824, 0, 0, 0, 0, 544, 836, 0, 0, 0, 0, 552, 848, 0, 0, 0, 0, 544, 856, 0, 0, 0, 0, 544, 864, 0, 0, 0, 0, 568, 880, 0, 0, 0, 0, 576, 880, 0, 0, 0, 0, 592, 872, 0, 0, 0, 0, 600, 856, 0, 0, 0, 0, 616, 848, 0, 0, 0, 0, 616, 840, 0, 0, 0, 0, 620, 824, 0, 0, 0, 0, 608, 816, 0, 0, 0, 0, 616, 800, 0, 0, 0, 0, 608, 792, 0, 0, 0, 0, 596, 792, 0, 0, 0, 0, 584, 784, 0, 0, 0, 0, 576, 784, 0, 0, 0, 0, 568, 792, 0, 0, 0, 0, 552, 792 )
+"points": PoolVector2Array( 0, 0, 0, 0, 552, 792, 0, 0, 0, 0, 528, 816, 0, 0, 0, 0, 528, 824, 0, 0, 0, 0, 544, 836, 0, 0, 0, 0, 552, 848, 0, 0, 0, 0, 544, 856, 0, 0, 0, 0, 544, 864, 0, 0, 0, 0, 568, 880, 0, 0, 0, 0, 576, 880, 0, 0, 0, 0, 592, 872, 0, 0, 0, 0, 600, 856, 0, 0, 0, 0, 616, 848, 0, 0, 0, 0, 616, 840, 0, 0, 0, 0, 620, 824, 0, 0, 0, 0, 604, 812, 0, 0, 0, 0, 616, 800, 0, 0, 0, 0, 608, 792, 0, 0, 0, 0, 596, 792, 0, 0, 0, 0, 584, 784, 0, 0, 0, 0, 576, 784, 0, 0, 0, 0, 568, 792, 0, 0, 0, 0, 552, 792 )
 }
 
 [node name="root" type="Node2D"]
@@ -44,7 +44,7 @@ curve = SubResource( 3 )
 
 [node name="BeeManager" type="Node2D" parent="Bees"]
 script = ExtResource( 1 )
-amount = 924
+amount = 66
 boidTexture = ExtResource( 2 )
 foodTexture = ExtResource( 6 )
 rectPath = NodePath("../BeeArea")
@@ -69,7 +69,7 @@ curve = SubResource( 3 )
 
 [node name="FishManager" type="Node2D" parent="Fish"]
 script = ExtResource( 1 )
-amount = 918
+amount = 438
 boidTexture = ExtResource( 3 )
 foodTexture = ExtResource( 4 )
 rectPath = NodePath("../FishArea")
@@ -87,7 +87,7 @@ color = Color( 0.145098, 0.27451, 0.329412, 1 )
 
 [node name="FrogManager" type="Node2D" parent="Frogs"]
 script = ExtResource( 1 )
-amount = 306
+amount = 80
 boidTexture = ExtResource( 5 )
 foodTexture = ExtResource( 7 )
 rectPath = NodePath("../FrogArea")

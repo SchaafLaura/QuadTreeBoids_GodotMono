@@ -8,6 +8,7 @@ internal class Boid : Vec2
 {
     public Vec2 acc { get; private set; } = new Vec2(0, 0); // acceleration
     public Vec2 vel { get; private set; } = new Vec2(0, 0); // velocity
+    public Vector2 asVector;
 
 
     //public bool process = Util.rng.NextDouble() < 0.5;
@@ -57,11 +58,7 @@ internal class Boid : Vec2
     /// <param name="food">The food items to path towards</param>
     public void Update(QuadTree<Boid> boids, Path2D path, List<(Vec2 pos, int)> food, Vector2[] polygonCollider)
     {
-        /* process = !process;
-
-         if (process)
-         {
-        */
+        asVector = new Vector2(x, y);
 
         // get surrounding boids
         var flock = boids.Query(this, largeRange);
@@ -107,11 +104,9 @@ internal class Boid : Vec2
         Vec2 pathvel;
         if (path != null) {
             var pathvelVector = path.Curve.InterpolateBaked(
-                path.Curve.GetClosestOffset(/*path.ToLocal(*/new Vector2(x, y)/*)*/) +
+                path.Curve.GetClosestOffset(asVector) +
                 path.Curve.GetBakedLength() * pathLookAhead,
                 useCubicInterpolation);
-
-            //pathvelVector = path.ToGlobal(pathvelVector);
             pathvel = pathvelVector.ToVec2();
         }
         else
@@ -170,8 +165,6 @@ internal class Boid : Vec2
         if (foodExists)
             acc.Add(Vec2.OfMagnitude(foodPos - this, foodAttractionStrength));
 
-        /*} end of if(process)*/
-
         // if boid is too close to edge, steer away from it
         if (x < boids.UpperLeft.x + margin)
             acc.x = Math.Abs(acc.x) * marginSteerStrength;
@@ -203,28 +196,26 @@ internal class Boid : Vec2
          acc.x *= acc.x * 0.5f;
          acc.y *= acc.y * 0.5f;
 
-        
-
-        
-
         // second part of euler integration (updating position due to velocity and accelleration)
         Add(vel);
         Add(acc);
 
         // resolve collisions
-        if (Geometry.IsPointInPolygon(ToVector2(), polygonCollider))
+        if (Geometry.IsPointInPolygon(asVector, polygonCollider))
         {
             vel.x *= -1;
             vel.y *= -1;
             Add(vel);
         }
         int k = 0;
-        while (Geometry.IsPointInPolygon(ToVector2(), polygonCollider))
+        while (Geometry.IsPointInPolygon(asVector, polygonCollider))
         {
             Add(vel);
             Subtract(acc);
+            
             if (k++ > 100)
                 break;
+            asVector = ToVector2();
         }
 
 

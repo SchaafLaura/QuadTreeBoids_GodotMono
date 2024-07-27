@@ -97,14 +97,12 @@ public class Swarm : Node2D
             if (colliderPolygon != null && Geometry.IsPointInPolygon(b.ToVector2(), colliderPolygon))
                 continue;
 
-
             boids.Insert(b);
             boidList.Add(b);
 
             // make some sprites to display the boids
             var s = new Sprite();
             s.Texture = boidTexture;
-
             s.Position = b.ToVector2();
             spriteList.Add(s);
 
@@ -112,9 +110,6 @@ public class Swarm : Node2D
             s.ZIndex++;
             AddChild(s);
         }
-
-
-
     }
 
     public override void _PhysicsProcess(float delta)
@@ -146,7 +141,6 @@ public class Swarm : Node2D
         boids = new QuadTree<Boid>(boundary);
         for (int i = 0; i < boidList.Count; i++)
         {
-            //Debug.Print(boidList[i].ToString());
             boids.Insert(boidList[i]);
 
             // update sprite positions and rotations
@@ -183,6 +177,7 @@ public class Swarm : Node2D
         food.Add((pos.ToVec2(), 0));
         var s = new Sprite();
         s.Texture = foodTexture;
+        s.Rotate((float)(Util.rng.NextDouble() * 6.28));
         s.Position = pos;
         AddChild(s);
         foodSpriteList.Add(s);
