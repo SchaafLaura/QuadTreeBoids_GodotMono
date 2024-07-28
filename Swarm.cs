@@ -26,10 +26,12 @@ public class Swarm : Node2D
     Vector2[] colliderPolygon;
     Transform colliderTransform;
 
-
     [Export]
     NodePath pathPath;
     Path2D path;
+
+    [Export]
+    ShaderMaterial material;
 
     QuadTree<Boid> boids;
     List<Boid> boidList             = new List<Boid>();
@@ -53,10 +55,7 @@ public class Swarm : Node2D
 
             path = new Path2D();
             for (int i = 0; i < pathPoints.Length; i++)
-                path.Curve.AddPoint(pathPoints[i]);
-
-            
-            
+                path.Curve.AddPoint(pathPoints[i]); 
         }
             
 
@@ -72,8 +71,6 @@ public class Swarm : Node2D
                     colliderPolygon[i] = c.ToGlobal(colliderPolygon[i]);
             }
         }
-        
-
 
         // get the rect defining the position and size of the area where the BOIDs live
         rect = GetNode<ColorRect>(rectPath);
@@ -103,6 +100,9 @@ public class Swarm : Node2D
             // make some sprites to display the boids
             var s = new Sprite();
             s.Texture = boidTexture;
+            if (material != null)
+                s.Material = material;
+            
             s.Position = b.ToVector2();
             spriteList.Add(s);
 
