@@ -5,16 +5,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-public class Swarm : Node2D
+public partial class Swarm : Node2D
 {
     [Export(PropertyHint.Range, "0,5000,1")]
     int amount = 500;
 
     [Export]
-    Texture boidTexture;
+    Texture2D boidTexture;
 
     [Export]
-    Texture foodTexture;
+    Texture2D foodTexture;
 
     [Export]
     NodePath rectPath;
@@ -24,7 +24,7 @@ public class Swarm : Node2D
     [Export]
     NodePath colliderPath;
     Vector2[] colliderPolygon;
-    Transform colliderTransform;
+    Transform3D colliderTransform;
 
     [Export]
     NodePath pathPath;
@@ -35,9 +35,9 @@ public class Swarm : Node2D
 
     QuadTree<Boid> boids;
     List<Boid> boidList             = new List<Boid>();
-    List<Sprite> spriteList         = new List<Sprite>();
+    List<Sprite2D> spriteList         = new List<Sprite2D>();
     List<(Vec2 pos, int t)> food    = new List<(Vec2, int)>();
-    List<Sprite> foodSpriteList     = new List<Sprite>();
+    List<Sprite2D> foodSpriteList     = new List<Sprite2D>();
 
     Vec2 pos;
     Vec2 size;
@@ -48,14 +48,18 @@ public class Swarm : Node2D
         if(pathPath != null)
         {
             path = GetNode<Path2D>(pathPath);
-            var pathPoints = path.Curve.GetBakedPoints();
+            if (path != null)
+            {
+                var pathPoints = path.Curve.GetBakedPoints();
 
-            for (int i = 0; i < pathPoints.Length; i++)
-                pathPoints[i] =  path.ToGlobal(pathPoints[i]);
+                for (int i = 0; i < pathPoints.Length; i++)
+                    pathPoints[i] = path.ToGlobal(pathPoints[i]);
 
-            path = new Path2D();
-            for (int i = 0; i < pathPoints.Length; i++)
-                path.Curve.AddPoint(pathPoints[i]); 
+                path = new Path2D();
+                path.Curve = new Curve2D();
+                foreach (var p in pathPoints)
+                    path.Curve.AddPoint(p);
+            }
         }
             
 
@@ -74,8 +78,8 @@ public class Swarm : Node2D
 
         // get the rect defining the position and size of the area where the BOIDs live
         rect = GetNode<ColorRect>(rectPath);
-        pos = new Vec2(rect.RectGlobalPosition.x, rect.RectGlobalPosition.y);
-        size = new Vec2(rect.RectSize.x, rect.RectSize.y);
+        pos = new Vec2(rect.GlobalPosition.X, rect.GlobalPosition.Y);
+        size = new Vec2(rect.Size.X, rect.Size.Y);
 
         // keep the bounding rect because we need to rebuild the quadtree a buncha times
         boundary = new Rectangle(pos + size * 0.5f, size);
@@ -91,14 +95,14 @@ public class Swarm : Node2D
                 rng.Next((int)pos.x, (int)(pos.x + size.x)),
                 rng.Next((int)pos.y, (int)(pos.y + size.y)));
 
-            if (colliderPolygon != null && Geometry.IsPointInPolygon(b.ToVector2(), colliderPolygon))
+            if (colliderPolygon != null && Geometry2D.IsPointInPolygon(b.ToVector2(), colliderPolygon))
                 continue;
 
             boids.Insert(b);
             boidList.Add(b);
 
             // make some sprites to display the boids
-            var s = new Sprite();
+            var s = new Sprite2D();
             s.Texture = boidTexture;
             if (material != null)
                 s.Material = material;
@@ -112,7 +116,7 @@ public class Swarm : Node2D
         }
     }
 
-    public override void _PhysicsProcess(float delta)
+    public override void _PhysicsProcess(double delta)
     {
         // update and rebuilding needs two loops
         // one for updating, which uses the current quad-tree for efficient searching of the space
@@ -163,7 +167,7 @@ public class Swarm : Node2D
     public override void _UnhandledInput(InputEvent input)
     {
         if (input is InputEventMouseButton btnEvent)
-            if (btnEvent.Pressed && btnEvent.ButtonIndex == (int)ButtonList.Left)
+            if (btnEvent.Pressed && btnEvent.ButtonIndex == MouseButton.Left)
                 AddFood(btnEvent.Position);
 
         base._UnhandledInput(input);
@@ -171,11 +175,11 @@ public class Swarm : Node2D
 
     private void AddFood(Vector2 pos)
     {
-        if (pos.x < this.pos.x || pos.y < this.pos.y ||
-            pos.x > this.pos.x + this.size.x || pos.y > this.pos.y + this.size.y)
+        if (pos.X < this.pos.x || pos.Y < this.pos.y ||
+            pos.X > this.pos.x + this.size.x || pos.Y > this.pos.y + this.size.y)
             return;
         food.Add((pos.ToVec2(), 0));
-        var s = new Sprite();
+        var s = new Sprite2D();
         s.Texture = foodTexture;
         s.Rotate((float)(Util.rng.NextDouble() * 6.28));
         s.Position = pos;

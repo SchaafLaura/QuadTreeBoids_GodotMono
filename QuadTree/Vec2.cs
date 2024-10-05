@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using Godot;
 
@@ -131,7 +131,7 @@ internal class Vec2
 
     public static Vec2 Normalize(Vector2 v)
     {
-        var ret = new Vec2(v.x, v.y);
+        var ret = new Vec2(v.X, v.Y);
         ret.Normalize();
         return ret;
     }

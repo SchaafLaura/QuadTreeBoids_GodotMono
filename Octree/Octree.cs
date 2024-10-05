@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System.Collections.Generic;
 internal class Octree<NodeType> where NodeType : Vertex3D
 {
@@ -89,20 +89,20 @@ internal class Octree<NodeType> where NodeType : Vertex3D
         divided = true;
 
         // center point
-        var x = boundary.Position.x;
-        var y = boundary.Position.y;
-        var z = boundary.Position.z;
+        var x = boundary.Position.X;
+        var y = boundary.Position.Y;
+        var z = boundary.Position.Z;
 
         // half of size
-        var hsx = boundary.Size.x * 0.5f;
-        var hsy = boundary.Size.y * 0.5f;
-        var hsz = boundary.Size.z * 0.5f;
+        var hsx = boundary.Size.X * 0.5f;
+        var hsy = boundary.Size.Y * 0.5f;
+        var hsz = boundary.Size.Z * 0.5f;
         var halfSize = new Vector3(hsx, hsy, hsz);
 
         // quarder size for offsets
-        var qsx = boundary.Size.x * 0.25f;
-        var qsy = boundary.Size.y * 0.25f;
-        var qsz = boundary.Size.z * 0.25f;
+        var qsx = boundary.Size.X * 0.25f;
+        var qsy = boundary.Size.Y * 0.25f;
+        var qsz = boundary.Size.Z * 0.25f;
 
         divided = true;
         UNE = new Octree<NodeType>(new Box(new Vector3(x + qsx, y + qsy, z + qsz), halfSize));

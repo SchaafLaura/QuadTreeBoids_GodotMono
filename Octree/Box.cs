@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 internal class Box
 {
     public Vector3 Position { get; set; }
@@ -16,27 +16,27 @@ internal class Box
     public bool Contains(Vector3 p, float r)
     {
         return
-            p.x >= Position.x - halfSize.x - r &&
-            p.x <= Position.x + halfSize.x + r &&
+            p.X >= Position.X - halfSize.X - r &&
+            p.X <= Position.X + halfSize.X + r &&
 
-            p.y >= Position.y - halfSize.y - r &&
-            p.y <= Position.y + halfSize.y + r &&
+            p.Y >= Position.Y - halfSize.Y - r &&
+            p.Y <= Position.Y + halfSize.Y + r &&
 
-            p.z >= Position.z - halfSize.z - r &&
-            p.z <= Position.z + halfSize.z + r;
+            p.Z >= Position.Z - halfSize.Z - r &&
+            p.Z <= Position.Z + halfSize.Z + r;
     }
 
     public bool Contains(Vector3 p)
     {
         return
-            p.x >= Position.x - halfSize.x &&
-            p.x <= Position.x + halfSize.x &&
+            p.X >= Position.X - halfSize.X &&
+            p.X <= Position.X + halfSize.X &&
 
-            p.y >= Position.y - halfSize.y &&
-            p.y <= Position.y + halfSize.y &&
+            p.Y >= Position.Y - halfSize.Y &&
+            p.Y <= Position.Y + halfSize.Y &&
 
-            p.z >= Position.z - halfSize.z &&
-            p.z <= Position.z + halfSize.z;
+            p.Z >= Position.Z - halfSize.Z &&
+            p.Z <= Position.Z + halfSize.Z;
     }
 
 }

@@ -1,104 +1,105 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=11 format=3 uid="uid://d0jruc32l86k7"]
 
-[ext_resource path="res://Swarm.cs" type="Script" id=1]
-[ext_resource path="res://sprites/bee.png" type="Texture" id=2]
-[ext_resource path="res://sprites/fish.png" type="Texture" id=3]
-[ext_resource path="res://sprites/food.png" type="Texture" id=4]
-[ext_resource path="res://sprites/frog.png" type="Texture" id=5]
-[ext_resource path="res://sprites/flowers.png" type="Texture" id=6]
-[ext_resource path="res://sprites/flies.png" type="Texture" id=7]
-[ext_resource path="res://sprites/rock.png" type="Texture" id=8]
+[ext_resource type="Script" path="res://Swarm.cs" id="1"]
+[ext_resource type="Texture2D" uid="uid://dp8u8rx0h1pmf" path="res://sprites/ant.png" id="2_v0tve"]
+[ext_resource type="Texture2D" uid="uid://bub4atlmblsqi" path="res://sprites/fish.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://byng24c72ic7a" path="res://sprites/food.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://cc43ytx2e52yr" path="res://sprites/frog.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://bokpw3e3pv4c7" path="res://sprites/flowers.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://dp6lcntx5f1dk" path="res://sprites/flies.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://8yna85ipsen8" path="res://sprites/rock.png" id="8"]
 
-[sub_resource type="Curve2D" id=3]
+[sub_resource type="Curve2D" id="3"]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 250, 791, 0, 0, 0, 0, 199, 744, 0, 0, 0, 0, 189, 686, 0, 0, 0, 0, 193, 622, 0, 0, 0, 0, 236, 602, 0, 0, 0, 0, 223, 562, 0, 0, 0, 0, 176, 542, 0, 0, 0, 0, 213, 498, 0, 0, 0, 0, 230, 461, 0, 0, 0, 0, 316, 428, 0, 0, 0, 0, 409, 350, 0, 0, 0, 0, 570, 344, 0, 0, 0, 0, 719, 299, 0, 0, 0, 0, 857, 289, 0, 0, 0, 0, 963.512, 350.897, 0, 0, 0, 0, 1069, 322, 0, 0, 0, 0, 1240, 372, 0, 0, 0, 0, 1336, 362, 0, 0, 0, 0, 1329, 445, 0, 0, 0, 0, 1445, 483, 0, 0, 0, 0, 1490, 564, 0, 0, 0, 0, 1588, 579, 0, 0, 0, 0, 1628, 672, 0, 0, 0, 0, 1673, 770, 0, 0, 0, 0, 1596, 979, 0, 0, 0, 0, 1462, 1085, 0, 0, 0, 0, 1278, 1103, 0, 0, 0, 0, 1165, 1141, 0, 0, 0, 0, 1067, 1131, 0, 0, 0, 0, 963.683, 1162.83, 0, 0, 0, 0, 878, 1153, 0, 0, 0, 0, 744, 1146, 0, 0, 0, 0, 648, 1108, 0, 0, 0, 0, 595, 967, 0, 0, 0, 0, 477, 826, 0, 0, 0, 0, 324, 848, 0, 0, 0, 0, 250, 791 )
+"points": PackedVector2Array(0, 0, 0, 0, 250, 791, 0, 0, 0, 0, 199, 744, 0, 0, 0, 0, 189, 686, 0, 0, 0, 0, 193, 622, 0, 0, 0, 0, 236, 602, 0, 0, 0, 0, 223, 562, 0, 0, 0, 0, 176, 542, 0, 0, 0, 0, 213, 498, 0, 0, 0, 0, 230, 461, 0, 0, 0, 0, 316, 428, 0, 0, 0, 0, 409, 350, 0, 0, 0, 0, 570, 344, 0, 0, 0, 0, 719, 299, 0, 0, 0, 0, 857, 289, 0, 0, 0, 0, 963.512, 350.897, 0, 0, 0, 0, 1069, 322, 0, 0, 0, 0, 1240, 372, 0, 0, 0, 0, 1336, 362, 0, 0, 0, 0, 1329, 445, 0, 0, 0, 0, 1445, 483, 0, 0, 0, 0, 1490, 564, 0, 0, 0, 0, 1588, 579, 0, 0, 0, 0, 1628, 672, 0, 0, 0, 0, 1673, 770, 0, 0, 0, 0, 1596, 979, 0, 0, 0, 0, 1462, 1085, 0, 0, 0, 0, 1278, 1103, 0, 0, 0, 0, 1165, 1141, 0, 0, 0, 0, 1067, 1131, 0, 0, 0, 0, 963.683, 1162.83, 0, 0, 0, 0, 878, 1153, 0, 0, 0, 0, 744, 1146, 0, 0, 0, 0, 648, 1108, 0, 0, 0, 0, 595, 967, 0, 0, 0, 0, 477, 826, 0, 0, 0, 0, 324, 848, 0, 0, 0, 0, 250, 791)
 }
+point_count = 37
 
-[sub_resource type="Curve2D" id=4]
+[sub_resource type="Curve2D" id="4"]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 552, 792, 0, 0, 0, 0, 528, 816, 0, 0, 0, 0, 532, 824, 0, 0, 0, 0, 544, 836, 0, 0, 0, 0, 552, 848, 0, 0, 0, 0, 544, 856, 0, 0, 0, 0, 544, 864, 0, 0, 0, 0, 568, 880, 0, 0, 0, 0, 576, 880, 0, 0, 0, 0, 592, 872, 0, 0, 0, 0, 600, 856, 0, 0, 0, 0, 616, 848, 0, 0, 0, 0, 616, 840, 0, 0, 0, 0, 620, 824, 0, 0, 0, 0, 608, 816, 0, 0, 0, 0, 612, 800, 0, 0, 0, 0, 608, 792, 0, 0, 0, 0, 596, 792, 0, 0, 0, 0, 580, 784, 0, 0, 0, 0, 576, 784, 0, 0, 0, 0, 564, 792, 0, 0, 0, 0, 552, 792 )
+"points": PackedVector2Array(0, 0, 0, 0, 552, 792, 0, 0, 0, 0, 528, 816, 0, 0, 0, 0, 532, 824, 0, 0, 0, 0, 544, 836, 0, 0, 0, 0, 552, 848, 0, 0, 0, 0, 544, 856, 0, 0, 0, 0, 544, 864, 0, 0, 0, 0, 568, 880, 0, 0, 0, 0, 576, 880, 0, 0, 0, 0, 592, 872, 0, 0, 0, 0, 600, 856, 0, 0, 0, 0, 616, 848, 0, 0, 0, 0, 616, 840, 0, 0, 0, 0, 620, 824, 0, 0, 0, 0, 608, 816, 0, 0, 0, 0, 612, 800, 0, 0, 0, 0, 608, 792, 0, 0, 0, 0, 596, 792, 0, 0, 0, 0, 580, 784, 0, 0, 0, 0, 576, 784, 0, 0, 0, 0, 564, 792, 0, 0, 0, 0, 552, 792)
 }
+point_count = 22
 
 [node name="root" type="Node2D"]
 
 [node name="background" type="ColorRect" parent="."]
-margin_right = 1920.0
-margin_bottom = 1080.0
-rect_pivot_offset = Vector2( -792, -404 )
+offset_right = 1920.0
+offset_bottom = 1080.0
+pivot_offset = Vector2(-792, -404)
 mouse_filter = 2
-color = Color( 0.219608, 0.141176, 0.313726, 1 )
+color = Color(0.219608, 0.141176, 0.313726, 1)
 
 [node name="Bees" type="Node" parent="."]
 
 [node name="BeeArea" type="ColorRect" parent="Bees"]
-margin_right = 1016.0
-margin_bottom = 570.0
-rect_pivot_offset = Vector2( -792, -404 )
+offset_right = 1016.0
+offset_bottom = 570.0
+pivot_offset = Vector2(-792, -404)
 mouse_filter = 2
-color = Color( 0.137255, 0.301961, 0.14902, 1 )
+color = Color(0.137255, 0.301961, 0.14902, 1)
 
 [node name="BeePath" type="Path2D" parent="Bees"]
-position = Vector2( 59, -30 )
-scale = Vector2( 0.470622, 0.427 )
-curve = SubResource( 3 )
+position = Vector2(59, -30)
+scale = Vector2(0.470622, 0.427)
+curve = SubResource("3")
 
 [node name="BeeManager" type="Node2D" parent="Bees"]
-script = ExtResource( 1 )
-amount = 1649
-boidTexture = ExtResource( 2 )
-foodTexture = ExtResource( 6 )
+script = ExtResource("1")
+amount = 7
+boidTexture = ExtResource("2_v0tve")
+foodTexture = ExtResource("6")
 rectPath = NodePath("../BeeArea")
-colliderPath = NodePath("")
 pathPath = NodePath("../BeePath")
 
 [node name="Fish" type="Node" parent="."]
 
 [node name="FishArea" type="ColorRect" parent="Fish"]
-margin_left = 1036.0
-margin_right = 1920.0
-margin_bottom = 1080.0
-rect_pivot_offset = Vector2( -792, -404 )
+offset_left = 1036.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+pivot_offset = Vector2(-792, -404)
 mouse_filter = 2
-color = Color( 0.282353, 0.490196, 0.721569, 1 )
+color = Color(0.282353, 0.490196, 0.721569, 1)
 
 [node name="FishPath" type="Path2D" parent="Fish"]
-position = Vector2( 1242.14, -116.787 )
+position = Vector2(1242.14, -116.787)
 rotation = 0.328122
-scale = Vector2( 0.497692, 0.719622 )
-curve = SubResource( 3 )
+scale = Vector2(0.497692, 0.719622)
+curve = SubResource("3")
 
 [node name="FishManager" type="Node2D" parent="Fish"]
-script = ExtResource( 1 )
-amount = 1888
-boidTexture = ExtResource( 3 )
-foodTexture = ExtResource( 4 )
+script = ExtResource("1")
+amount = 798
+boidTexture = ExtResource("3")
+foodTexture = ExtResource("4")
 rectPath = NodePath("../FishArea")
 pathPath = NodePath("../FishPath")
 
 [node name="Frogs" type="Node" parent="."]
 
 [node name="FrogArea" type="ColorRect" parent="Frogs"]
-margin_top = 590.0
-margin_right = 1016.0
-margin_bottom = 1080.0
-rect_pivot_offset = Vector2( -792, -404 )
+offset_top = 590.0
+offset_right = 1016.0
+offset_bottom = 1080.0
+pivot_offset = Vector2(-792, -404)
 mouse_filter = 2
-color = Color( 0.145098, 0.27451, 0.329412, 1 )
+color = Color(0.145098, 0.27451, 0.329412, 1)
 
 [node name="FrogManager" type="Node2D" parent="Frogs"]
-script = ExtResource( 1 )
-amount = 1220
-boidTexture = ExtResource( 5 )
-foodTexture = ExtResource( 7 )
+script = ExtResource("1")
+amount = 795
+boidTexture = ExtResource("5")
+foodTexture = ExtResource("7")
 rectPath = NodePath("../FrogArea")
 colliderPath = NodePath("../RockCollider")
 
-[node name="Rock" type="Sprite" parent="Frogs"]
-position = Vector2( 560, 840 )
-scale = Vector2( 2, 2 )
-texture = ExtResource( 8 )
+[node name="Rock" type="Sprite2D" parent="Frogs"]
+position = Vector2(560, 840)
+scale = Vector2(2, 2)
+texture = ExtResource("8")
 
 [node name="RockCollider" type="Path2D" parent="Frogs"]
-position = Vector2( -576, -824 )
-scale = Vector2( 2, 2 )
-curve = SubResource( 4 )
+position = Vector2(-576, -824)
+scale = Vector2(2, 2)
+curve = SubResource("4")

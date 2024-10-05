@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System;
 using System.Diagnostics;
 internal class Boid3D : Vertex3D
@@ -27,7 +27,7 @@ internal class Boid3D : Vertex3D
 
     static Random rng = new Random();
 
-    public void Update(Octree<Boid3D> boids, Path path)
+    public void Update(Octree<Boid3D> boids, Path3D path)
     {
         // get surrounding boids
         var flock = boids.Query(Position, largeRange);
@@ -59,7 +59,7 @@ internal class Boid3D : Vertex3D
             flockAvg.close);
 
         // find the closest point on curve
-        var pathvel = path.Curve.InterpolateBaked(path.Curve.GetClosestOffset(Position) + 10, true);
+        var pathvel = path.Curve.SampleBaked(path.Curve.GetClosestOffset(Position) + 10, true);
 
         // add all forces together
         acc =
@@ -71,18 +71,18 @@ internal class Boid3D : Vertex3D
 
         // if boid is too close to edge, steer away from it
         // this assumes the quadtree is positioned at 0, 0, 0
-        if (Position.x < margin)
-            acc = new Vector3(Math.Abs(acc.x) * 2f, acc.y, acc.z);
-        if (Position.y < margin)
-            acc = new Vector3(acc.x, Math.Abs(acc.y) * 2f, acc.z);
-        if (Position.z < margin)
-            acc = new Vector3(acc.x, acc.y, Math.Abs(acc.z) * 2f);
-        if (Position.x > boids.boundary.Size.x - margin)
-            acc = new Vector3(-Math.Abs(acc.x) * 2f, acc.y, acc.z);
-        if (Position.y > boids.boundary.Size.y - margin)
-            acc = new Vector3(acc.x, -Math.Abs(acc.y) * 2f, acc.z);
-        if (Position.z > boids.boundary.Size.z - margin)
-            acc = new Vector3(acc.x, acc.y, -Math.Abs(acc.z) * 2f);
+        if (Position.X < margin)
+            acc = new Vector3(Math.Abs(acc.X) * 2f, acc.Y, acc.Z);
+        if (Position.Y < margin)
+            acc = new Vector3(acc.X, Math.Abs(acc.Y) * 2f, acc.Z);
+        if (Position.Z < margin)
+            acc = new Vector3(acc.X, acc.Y, Math.Abs(acc.Z) * 2f);
+        if (Position.X > boids.boundary.Size.X - margin)
+            acc = new Vector3(-Math.Abs(acc.X) * 2f, acc.Y, acc.Z);
+        if (Position.Y > boids.boundary.Size.Y - margin)
+            acc = new Vector3(acc.X, -Math.Abs(acc.Y) * 2f, acc.Z);
+        if (Position.Z > boids.boundary.Size.Z - margin)
+            acc = new Vector3(acc.X, acc.Y, -Math.Abs(acc.Z) * 2f);
 
         // first part of euler integration (updating velocity due to accel)
         acc = acc.Normalized() * accStrength;
@@ -92,22 +92,22 @@ internal class Boid3D : Vertex3D
 
         // if boid is *very* close to edge, move away from it 
         // this assumes (again) the quadtree is positioned at 0, 0, 0
-        if (Position.x < criticalMargin)
-            vel = new Vector3(Math.Abs(vel.x), vel.y, vel.z);
-        if (Position.y < criticalMargin)
-            vel = new Vector3(vel.x, Math.Abs(vel.y), vel.z);
-        if (Position.z < criticalMargin)
-            vel = new Vector3(vel.x, vel.y, Math.Abs(vel.z));
-        if (Position.x > boids.boundary.Size.x - criticalMargin)
-            vel = new Vector3(-Math.Abs(vel.x), vel.y, vel.z);
-        if (Position.y > boids.boundary.Size.y - criticalMargin)
-            vel = new Vector3(vel.x, -Math.Abs(vel.y), vel.z);
-        if (Position.z > boids.boundary.Size.z - criticalMargin)
-            vel = new Vector3(vel.x, vel.y, -Math.Abs(vel.z));
+        if (Position.X < criticalMargin)
+            vel = new Vector3(Math.Abs(vel.X), vel.Y, vel.Z);
+        if (Position.Y < criticalMargin)
+            vel = new Vector3(vel.X, Math.Abs(vel.Y), vel.Z);
+        if (Position.Z < criticalMargin)
+            vel = new Vector3(vel.X, vel.Y, Math.Abs(vel.Z));
+        if (Position.X > boids.boundary.Size.X - criticalMargin)
+            vel = new Vector3(-Math.Abs(vel.X), vel.Y, vel.Z);
+        if (Position.Y > boids.boundary.Size.Y - criticalMargin)
+            vel = new Vector3(vel.X, -Math.Abs(vel.Y), vel.Z);
+        if (Position.Z > boids.boundary.Size.Z - criticalMargin)
+            vel = new Vector3(vel.X, vel.Y, -Math.Abs(vel.Z));
 
         // second part of euler integration (updating position due to velocity)
-        Position += vel + 0.5f * new Vector3(acc.x * acc.x, acc.y * acc.y, acc.z * acc.z);
-        Position = Position.Constrain(0, boids.boundary.Size.x, 0, boids.boundary.Size.y, 0, boids.boundary.Size.z);
+        Position += vel + 0.5f * new Vector3(acc.X * acc.X, acc.Y * acc.Y, acc.Z * acc.Z);
+        Position = Position.Constrain(0, boids.boundary.Size.X, 0, boids.boundary.Size.Y, 0, boids.boundary.Size.Z);
     }
 }
 

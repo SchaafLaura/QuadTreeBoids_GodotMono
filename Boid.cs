@@ -19,7 +19,7 @@ internal class Boid : Vec2
     static float velocityAlignment      = 0.1f;        // flock vel. align
     static float positionAlignment      = 0.1f;        // flock pos. align
     static float pathAlignment          = 0.1f;         // path align
-    static float pathLookAhead          = 0.03f;        // (0-1) probably keep this below 0.1
+    static float pathLookAhead          = 0.003f;        // (0-1) probably keep this below 0.1
     static bool  useCubicInterpolation  = false;        // interpolation for path lookahead linear or cubic
     static float avoidStrength          = 0.7f;         // close-flock avoid
     static float randomStrength         = 0.1f;         // random movement
@@ -102,10 +102,11 @@ internal class Boid : Vec2
 
         // find the closest point on curve in global space
         Vec2 pathvel;
-        if (path != null) {
-            var pathvelVector = path.Curve.InterpolateBaked(
+        var len = path is null ? 0 : path.Curve.GetBakedLength();
+        if (len > 0) {
+            var pathvelVector = path.Curve.SampleBaked(
                 path.Curve.GetClosestOffset(asVector) +
-                path.Curve.GetBakedLength() * pathLookAhead,
+               path.Curve.GetBakedLength() * pathLookAhead,
                 useCubicInterpolation);
             pathvel = pathvelVector.ToVec2();
         }
@@ -201,14 +202,14 @@ internal class Boid : Vec2
         Add(acc);
 
         // resolve collisions
-        if (Geometry.IsPointInPolygon(asVector, polygonCollider))
+        if (Geometry2D.IsPointInPolygon(asVector, polygonCollider))
         {
             vel.x *= -1;
             vel.y *= -1;
             Add(vel);
         }
         int k = 0;
-        while (Geometry.IsPointInPolygon(asVector, polygonCollider))
+        while (Geometry2D.IsPointInPolygon(asVector, polygonCollider))
         {
             Add(vel);
             Subtract(acc);

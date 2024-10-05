@@ -1,16 +1,16 @@
-﻿using Godot;
+/*using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-internal class Swarm3D : Spatial
+internal class Swarm3D : Node3D
 {
     [Export(PropertyHint.Range, "0,5000,1")]
     int amount = 500;
 
     [Export]
-    Texture boidTexture;
+    Texture2D boidTexture;
 
-    Path path;
+    Path3D path;
 
     Octree<Boid3D> boids;
     List<Boid3D> boidList = new List<Boid3D>();
@@ -20,7 +20,7 @@ internal class Swarm3D : Spatial
     {
         
         // get the path the boids should swarm towards
-        path = GetNode<Path>("../SwarmPath");
+        path = GetNode<Path3D>("../SwarmPath");
         Debug.Print(path.ToString());
 
         // setup spatial data structure
@@ -39,7 +39,7 @@ internal class Swarm3D : Spatial
 
             // make some sprites to display the boids
             var s = new Sprite3D();
-            s.Texture = boidTexture;
+            s.Texture2D = boidTexture;
             s.Translate(b.Position);
             s.Scale = new Vector3(150, 150, 150);
             //s.Position = b.Position;
@@ -69,7 +69,7 @@ internal class Swarm3D : Spatial
         for (int i = 0; i < boidList.Count; i++)
         {
             boids.Insert(boidList[i]);
-            spriteList[i].Translation = boidList[i].Position;
+            spriteList[i].Position = boidList[i].Position;
             spriteList[i].Rotation = boidList[i].vel;
             // update sprite positions and rotations
             // spriteList[i].Position = boidList[i].Position;
@@ -78,3 +78,4 @@ internal class Swarm3D : Spatial
     }
 }
 
+*/
