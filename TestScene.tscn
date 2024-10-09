@@ -1,7 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://d0jruc32l86k7"]
+[gd_scene load_steps=12 format=3 uid="uid://d0jruc32l86k7"]
 
 [ext_resource type="Script" path="res://Swarm.cs" id="1"]
-[ext_resource type="Texture2D" uid="uid://dp8u8rx0h1pmf" path="res://sprites/ant.png" id="2_v0tve"]
+[ext_resource type="Texture2D" uid="uid://w67gou3rbax1" path="res://sprites/bee.png" id="2_7m2vw"]
 [ext_resource type="Texture2D" uid="uid://bub4atlmblsqi" path="res://sprites/fish.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://byng24c72ic7a" path="res://sprites/food.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://cc43ytx2e52yr" path="res://sprites/frog.png" id="5"]
@@ -21,6 +21,12 @@ _data = {
 }
 point_count = 22
 
+[sub_resource type="Curve2D" id="Curve2D_7b1kx"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 354, 802, 0, 0, 0, 0, 321, 899, 0, 0, 0, 0, 538, 956, 0, 0, 0, 0, 799, 971, 0, 0, 0, 0, 849, 721, 0, 0, 0, 0, 626, 657, 0, 0, 0, 0, 354, 802)
+}
+point_count = 7
+
 [node name="root" type="Node2D"]
 
 [node name="background" type="ColorRect" parent="."]
@@ -36,7 +42,6 @@ color = Color(0.219608, 0.141176, 0.313726, 1)
 offset_right = 1016.0
 offset_bottom = 570.0
 pivot_offset = Vector2(-792, -404)
-mouse_filter = 2
 color = Color(0.137255, 0.301961, 0.14902, 1)
 
 [node name="BeePath" type="Path2D" parent="Bees"]
@@ -46,8 +51,8 @@ curve = SubResource("3")
 
 [node name="BeeManager" type="Node2D" parent="Bees"]
 script = ExtResource("1")
-amount = 7
-boidTexture = ExtResource("2_v0tve")
+amount = 707
+boidTexture = ExtResource("2_7m2vw")
 foodTexture = ExtResource("6")
 rectPath = NodePath("../BeeArea")
 pathPath = NodePath("../BeePath")
@@ -59,7 +64,6 @@ offset_left = 1036.0
 offset_right = 1920.0
 offset_bottom = 1080.0
 pivot_offset = Vector2(-792, -404)
-mouse_filter = 2
 color = Color(0.282353, 0.490196, 0.721569, 1)
 
 [node name="FishPath" type="Path2D" parent="Fish"]
@@ -70,11 +74,10 @@ curve = SubResource("3")
 
 [node name="FishManager" type="Node2D" parent="Fish"]
 script = ExtResource("1")
-amount = 798
+amount = 2758
 boidTexture = ExtResource("3")
 foodTexture = ExtResource("4")
 rectPath = NodePath("../FishArea")
-pathPath = NodePath("../FishPath")
 
 [node name="Frogs" type="Node" parent="."]
 
@@ -83,16 +86,7 @@ offset_top = 590.0
 offset_right = 1016.0
 offset_bottom = 1080.0
 pivot_offset = Vector2(-792, -404)
-mouse_filter = 2
 color = Color(0.145098, 0.27451, 0.329412, 1)
-
-[node name="FrogManager" type="Node2D" parent="Frogs"]
-script = ExtResource("1")
-amount = 795
-boidTexture = ExtResource("5")
-foodTexture = ExtResource("7")
-rectPath = NodePath("../FrogArea")
-colliderPath = NodePath("../RockCollider")
 
 [node name="Rock" type="Sprite2D" parent="Frogs"]
 position = Vector2(560, 840)
@@ -103,3 +97,15 @@ texture = ExtResource("8")
 position = Vector2(-576, -824)
 scale = Vector2(2, 2)
 curve = SubResource("4")
+
+[node name="Path2D" type="Path2D" parent="Frogs"]
+curve = SubResource("Curve2D_7b1kx")
+
+[node name="FrogManager" type="Node2D" parent="Frogs"]
+script = ExtResource("1")
+amount = 185
+boidTexture = ExtResource("5")
+foodTexture = ExtResource("7")
+rectPath = NodePath("../FrogArea")
+colliderPath = NodePath("../RockCollider")
+pathPath = NodePath("../Path2D")

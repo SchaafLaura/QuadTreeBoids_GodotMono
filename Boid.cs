@@ -6,6 +6,7 @@ using System.Net;
 
 internal class Boid : Vec2
 {
+    public int ID { get; set; } = -1;
     public Vec2 acc { get; private set; } = new Vec2(0, 0); // acceleration
     public Vec2 vel { get; private set; } = new Vec2(0, 0); // velocity
     public Vector2 asVector;
